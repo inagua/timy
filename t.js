@@ -26,13 +26,29 @@ function formatDuration(start, stop) {
     return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss");
 }
 
+
+function tokensForAlias(a) {
+    if (a) {
+        const tokens = a.split(':');
+        if (tokens && tokens.length == 2) {
+            return tokens;
+        }
+    }
+    return undefined;
+}
 if (arguments.alias || arguments.a) {
-    const a = arguments.alias || arguments.a;
-    const tokens = a.split(':');
-    const alias = tokens[0];
-    const project = tokens[1];
-    json.aliases = json.aliases || {};
-    json.aliases[alias] = project;
+    const tokens = tokensForAlias(arguments.alias || arguments.a);
+    if (tokens) {
+        const tokens = a.split(':');
+        const alias = tokens[0].toLowerCase();
+        const project = tokens[1];
+        json.aliases = json.aliases || {};
+        json.aliases[alias] = project
+
+    } else {
+        console.error(' /!\\ Invalid parameter for alias aka alias:project');
+
+    }
 }
 
 if (arguments.start) {

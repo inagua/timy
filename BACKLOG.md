@@ -1,5 +1,8 @@
-- [ ] lower case aliases
+- [x] lower case aliases (#3)
 - [ ] replace existing aliases with project when add alias
 - [ ] create JSON file if not exist
 - [ ] daily report (cumulate same project tracks)
-- [x] 2 - Restart last stopped track (update usage)
+- [x] Restart last stopped track (update usage) (#2)
+- [ ] Push tracks
+- [ ] Track for other user
+- [ ] Test mode (do not save JSON)
