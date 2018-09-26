@@ -4,13 +4,17 @@
   "description": "Slack app for time tracking service",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test",
+    "autotest": "mocha test --watch"
   },
   "author": "jacques@inagua.ch",
   "license": "ISC",
   "dependencies": {
-    "minimist": "^1.2.0",
-    "moment": "^2.22.2"
+    "minimist": "1.2.0",
+    "moment": "2.22.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "chai": "4.2.0",
+    "mocha": "5.2.0"
+  }
 }

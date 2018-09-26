@@ -6,3 +6,4 @@
 - [ ] Push tracks
 - [ ] Track for other user
 - [ ] Test mode (do not save JSON)
+- [x] Setup Unit Tests (#4)
