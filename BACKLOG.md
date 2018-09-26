@@ -1,0 +1,5 @@
+- [ ] lower case aliases
+- [ ] replace existing aliases with project when add alias
+- [ ] create JSON file if not exist
+- [ ] daily report (cumulate same project tracks)
+- [x] #2 - restart stopped track

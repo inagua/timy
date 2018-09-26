@@ -7,6 +7,10 @@ var moment = require('moment');
 const now = new Date();
 var json = JSON.parse(fs.readFileSync(json1jsonFile, 'utf8'));
 
+function hasCurrent(json) {
+    return json && json.current && json.current.project;
+}
+
 function stopCurrent(json, now) {
     const previous = json.current;
     if (previous && previous.project) {
@@ -43,6 +47,18 @@ if (arguments.start) {
     };
 }
 
+if (arguments.restart) {
+    if (hasCurrent(json)) {
+        console.error(' /!\\ Can not restart because a task is pending.');
+    } else if (!json.tracks || json.tracks.length == 0) {
+        console.error(' /!\\ Can not restart because no closed task.');
+    } else {
+        json.current = Object.assign({}, json.tracks[json.tracks.length - 1]);
+        json.current.start = now;
+        json.current.stop = undefined;
+    }
+}
+
 if (arguments.stop) {
     stopCurrent(json, now);
 }
@@ -52,7 +68,7 @@ if (arguments.help || arguments.sos || arguments.usage || process.argv.length ==
 }
 
 if (arguments.report || arguments.r) {
-    if (json.current && json.current.project) {
+    if (hasCurrent(json)) {
         const duration = formatDuration(new Date(json.current.start), now);
         console.log('  - Project :', json.current.project);
         console.log('  - Duration:', duration + 's');
