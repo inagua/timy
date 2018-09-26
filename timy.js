@@ -1,4 +1,17 @@
+const fs = require('fs');
+
 module.exports = {
+
+    loadJson: function(path) {
+        var content;
+        try {
+            content = fs.readFileSync(path, 'utf8');
+        } catch (e) {
+            console.error(' /!\\ Json file not found at:', e.path);
+            return undefined;
+        }
+        return JSON.parse(content);
+    },
 
     handleComment: function (json, arguments, errorCallback) {
         if (json && json.current && json.current.project) {

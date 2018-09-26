@@ -1,13 +1,13 @@
-const json1jsonFile = 'timy-jco.json';
+const jsonFile = 'timy-jco.json';
 
 var arguments = require('minimist')(process.argv.slice(2));
 var fs = require('fs');
 var moment = require('moment');
 
-const now = new Date();
-var json = JSON.parse(fs.readFileSync(json1jsonFile, 'utf8'));
-
 const Timy = require('./timy');
+const now = new Date();
+
+const json = Timy.loadJson(jsonFile);
 
 function hasCurrent(json) {
     return json && json.current && json.current.project;
@@ -98,4 +98,4 @@ if (arguments.help || arguments.sos || arguments.usage || process.argv.length ==
     console.log(' - comment are added only on current track if exit')
 }
 
-fs.writeFileSync(json1jsonFile, JSON.stringify(json), 'utf8');
+fs.writeFileSync(jsonFile, JSON.stringify(json), 'utf8');
