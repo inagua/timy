@@ -64,7 +64,7 @@ if (arguments.stop) {
 }
 
 if (arguments.help || arguments.sos || arguments.usage || process.argv.length == 2) {
-    console.log('$ node t --alias|a alias:project --start aliasOrProject --stop --report|r');
+    console.log('$ node t --alias|a alias:project --start aliasOrProject --stop --restart --report|r');
 }
 
 if (arguments.report || arguments.r) {
