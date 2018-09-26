@@ -1,6 +1,6 @@
 - [x] lower case aliases (#3)
 - [ ] replace existing aliases with project when add alias
-- [ ] handle un-existing file (#6)
+- [x] handle un-existing file (#6)
 - [ ] daily report (cumulate same project tracks)
 - [x] Restart last stopped track (update usage) (#2)
 - [ ] Push tracks

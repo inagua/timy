@@ -2,7 +2,7 @@ const fs = require('fs');
 
 module.exports = {
 
-    loadJson: function(path) {
+    loadJson: function (path) {
         var content;
         try {
             content = fs.readFileSync(path, 'utf8');
@@ -19,9 +19,20 @@ module.exports = {
                 json.current.comments = json.current.comments || [];
                 json.current.comments.push(arguments.comment || arguments.c);
             }
-        } else if (errorCallback){
+        } else if (errorCallback) {
             errorCallback(' /!\\ Can not add comment because there is no current track.');
         }
+    },
+
+    handleSetup: function (json, arguments) {
+        if (arguments.setup) {
+            return {
+                "aliases": {},
+                "tracks": [],
+                "current": {}
+            };
+        }
+        return json;
     }
 
 };

@@ -7,7 +7,13 @@ var moment = require('moment');
 const Timy = require('./timy');
 const now = new Date();
 
-const json = Timy.loadJson(jsonFile);
+const laodedJson = Timy.loadJson(jsonFile);
+const json = Timy.handleSetup(laodedJson, arguments, error => console.error(error));
+if (!json) {
+    console.error(' /!\\ Try to use the --setup argument');
+    console.error(' /!\\ Program exited: nothing done!');
+    return;
+}
 
 function hasCurrent(json) {
     return json && json.current && json.current.project;
@@ -91,7 +97,7 @@ if (arguments.report || arguments.r) {
     }
 }
 
-Timy.handleComment(json, arguments, error => console.log(error));
+Timy.handleComment(json, arguments, error => console.error(error));
 
 if (arguments.help || arguments.sos || arguments.usage || process.argv.length == 2) {
     console.log('$ node t --alias|a alias:project --start aliasOrProject --stop --restart --report|r --comment|c "some comment"');
