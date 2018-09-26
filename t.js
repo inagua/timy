@@ -26,12 +26,16 @@ function stopCurrent(json, now) {
         json.tracks = json.tracks || [];
         json.tracks.push(previous);
         json.current = {};
+        hasChanged = true;
     }
 }
 
+function formatSeconds(seconds) {
+    return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss");
+}
 function formatDuration(start, stop) {
     const seconds = (stop.getTime() - start.getTime()) / 1000;
-    return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss");
+    return formatSeconds(seconds);
 }
 
 
@@ -44,6 +48,9 @@ function tokensForAlias(a) {
     }
     return undefined;
 }
+
+var hasChanged = false;
+
 if (arguments.alias || arguments.a) {
     const tokens = tokensForAlias(arguments.alias || arguments.a);
     if (tokens) {
@@ -52,6 +59,7 @@ if (arguments.alias || arguments.a) {
         const project = tokens[1];
         json.aliases = json.aliases || {};
         json.aliases[alias] = project
+        hasChanged = true;
 
     } else {
         console.error(' /!\\ Invalid parameter for alias aka alias:project');
@@ -69,6 +77,7 @@ if (arguments.start) {
         "start": now,
         "project": project
     };
+    hasChanged = true;
 }
 
 if (arguments.restart) {
@@ -80,6 +89,7 @@ if (arguments.restart) {
         json.current = Object.assign({}, json.tracks[json.tracks.length - 1]);
         json.current.start = now;
         json.current.stop = undefined;
+        hasChanged = true;
     }
 }
 
@@ -87,21 +97,29 @@ if (arguments.stop) {
     stopCurrent(json, now);
 }
 
+const report = Timy.handleReport(json, arguments, now);
+if (report.length > 0) {
+    report.forEach(r => console.log('  - Duration:', formatSeconds(r.seconds) + 's', '  |  Project:', r.project, r.alias ? '(' + r.alias + ')' : ''));
+}
 if (arguments.report || arguments.r) {
     if (hasCurrent(json)) {
         const duration = formatDuration(new Date(json.current.start), now);
-        console.log('  - Project :', json.current.project);
-        console.log('  - Duration:', duration + 's');
+        console.log('Including current:');
+        console.log('  - Duration:', duration + 's', '  |  Project:', json.current.project);
     } else {
         console.log('  - No pending task!');
     }
 }
 
-Timy.handleComment(json, arguments, error => console.error(error));
+if (Timy.handleComment(json, arguments, error => console.error(error))) {
+    hasChanged = true;
+}
 
 if (arguments.help || arguments.sos || arguments.usage || process.argv.length == 2) {
     console.log('$ node t --alias|a alias:project --start aliasOrProject --stop --restart --report|r --comment|c "some comment"');
     console.log(' - comment are added only on current track if exit')
 }
 
-fs.writeFileSync(jsonFile, JSON.stringify(json), 'utf8');
+if (hasChanged) {
+    fs.writeFileSync(jsonFile, JSON.stringify(json), 'utf8');
+}
