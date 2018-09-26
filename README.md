@@ -23,6 +23,16 @@ Configure launcher in `package.json`:
   },
 ```
 
+Create test in `test/some-test.js`:
+```
+const expect = require('chai').expect;
+describe('Some test', function () {
+    it('Some case', function () {
+        expect(22).to.equal(22);
+    });
+});
+```
+
 Run unit tests:
 
 ```

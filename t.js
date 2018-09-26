@@ -7,6 +7,8 @@ var moment = require('moment');
 const now = new Date();
 var json = JSON.parse(fs.readFileSync(json1jsonFile, 'utf8'));
 
+const Timy = require('./timy');
+
 function hasCurrent(json) {
     return json && json.current && json.current.project;
 }
@@ -79,10 +81,6 @@ if (arguments.stop) {
     stopCurrent(json, now);
 }
 
-if (arguments.help || arguments.sos || arguments.usage || process.argv.length == 2) {
-    console.log('$ node t --alias|a alias:project --start aliasOrProject --stop --restart --report|r');
-}
-
 if (arguments.report || arguments.r) {
     if (hasCurrent(json)) {
         const duration = formatDuration(new Date(json.current.start), now);
@@ -91,6 +89,13 @@ if (arguments.report || arguments.r) {
     } else {
         console.log('  - No pending task!');
     }
+}
+
+Timy.handleComment(json, arguments, error => console.log(error));
+
+if (arguments.help || arguments.sos || arguments.usage || process.argv.length == 2) {
+    console.log('$ node t --alias|a alias:project --start aliasOrProject --stop --restart --report|r --comment|c "some comment"');
+    console.log(' - comment are added only on current track if exit')
 }
 
 fs.writeFileSync(json1jsonFile, JSON.stringify(json), 'utf8');

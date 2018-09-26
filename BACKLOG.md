@@ -7,3 +7,4 @@
 - [ ] Track for other user
 - [ ] Test mode (do not save JSON)
 - [x] Setup Unit Tests (#4)
+- [x] Add comment on current track (#5)
