@@ -9,5 +9,7 @@
 - [x] Setup Unit Tests (#4)
 - [x] Add comment on current track (#5)
 - [ ] Can stop for a given time
+- [ ] Acknowledge commands (ex: the name of the *restart*ed project)
+- [ ] Display comments on report
 
 #7
