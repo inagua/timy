@@ -46,8 +46,11 @@ module.exports = {
         // Iterate on tracks
         json.tracks.forEach(function (t) {
             if (new Date(t.stop).toDateString() === now.toDateString()) {
-                summariesByProject[t.project] = summariesByProject[t.project] || { seconds:0 };
-                summariesByProject[t.project].seconds += Math.trunc((new Date(t.stop).getTime() - new Date(t.start).getTime()) / 1000);
+                const summary = summariesByProject[t.project] || { seconds:0, comments:[] };
+                summariesByProject[t.project] = summary;
+                summary.seconds += Math.trunc((new Date(t.stop).getTime() - new Date(t.start).getTime()) / 1000);
+                summary.comments = summary.comments.concat(t.comments);
+
             }
         });
 

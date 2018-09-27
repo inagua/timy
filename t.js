@@ -99,7 +99,14 @@ if (arguments.stop) {
 
 const report = Timy.handleReport(json, arguments, now);
 if (report.length > 0) {
-    report.forEach(r => console.log('  - Duration:', formatSeconds(r.seconds) + 's', '  |  Project:', r.project, r.alias ? '(' + r.alias + ')' : ''));
+    report.forEach(r => {
+        console.log('  - Duration:', formatSeconds(r.seconds) + 's', '  |   Project:', r.project, r.alias ? '(' + r.alias + ')' : '');
+        if (r.comments) {
+            r.comments.forEach(c => {
+                console.log('      -', c);
+            });
+        }
+    });
 }
 if (arguments.report || arguments.r) {
     if (hasCurrent(json)) {

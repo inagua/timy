@@ -10,6 +10,6 @@
 - [x] Add comment on current track (#5)
 - [ ] Can stop for a given time
 - [ ] Acknowledge commands (ex: the name of the *restart*ed project)
-- [ ] Display comments on report
+- [x] Display comments on report (#8)
 
-#7
+#

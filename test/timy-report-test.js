@@ -17,40 +17,46 @@ describe('Timy', function () {
                 {
                     "start": "2018-09-26T06:53:13.716Z",
                     "project": "112505",
-                    "stop": "2018-09-25T07:06:22.141Z"
+                    "stop": "2018-09-25T07:06:22.141Z",
+                    "comments": ["a", "b"]
                 },
                 {
                     "start": "2018-09-26T07:06:22.141Z",
                     "project": "110105",
-                    "stop": "2018-09-25T09:48:30.921Z"
+                    "stop": "2018-09-25T09:48:30.921Z",
+                    "comments": ["c"]
                 },
                 // 2018-09-26
                 {
                     "start": "2018-09-26T06:53:13.716Z",
                     "project": "112505",
-                    "stop": "2018-09-26T07:06:22.141Z"
+                    "stop": "2018-09-26T07:06:22.141Z",
+                    "comments": ["d", "e"]
                 },
                 {
                     "start": "2018-09-26T07:06:22.141Z",
                     "project": "110105",
-                    "stop": "2018-09-26T09:48:30.921Z"
+                    "stop": "2018-09-26T09:48:30.921Z",
+                    "comments": ["f"]
                 },
                 {
                     "start": "2018-09-26T10:43:22.644Z",
                     "project": "110105",
-                    "stop": "2018-09-26T11:43:06.945Z"
+                    "stop": "2018-09-26T11:43:06.945Z",
+                    "comments": ["g", "h"]
                 },
                 {
                     "start": "2018-09-26T11:43:06.945Z",
                     "project": "112505",
-                    "stop": "2018-09-26T13:04:17.075Z"
+                    "stop": "2018-09-26T13:04:17.075Z",
+                    "comments": ["i"]
                 },
             ],
             "current":     {
                 "start": "2018-09-26T13:04:17.075Z",
                 "project": "110105",
                 "comments": [
-                    "Setup local environment for prestopark"
+                    "Setup local environment"
                 ],
             }
 
@@ -62,8 +68,9 @@ describe('Timy', function () {
         it('should create an item per project for the current day if report argument is provided', function () {
             const now = new Date('2018-09-26T14:14:37.075Z');
             expect(Timy.handleReport(json, minimist(['--report']), now)).to.eql([
-                { project:'110105', alias:'CivilCalendar', seconds:17532 },
-                { project:'112505', alias:'gtechna', seconds:5658 }
+                { project:'110105', alias:'CivilCalendar', seconds:17532, comments: ["f", "g", "h"] },
+                { project:'112505', alias:'gtechna', seconds:5658, comments: ["d", "e", "i"]
+                }
             ]);
         });
 
