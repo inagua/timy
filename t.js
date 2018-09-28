@@ -92,24 +92,23 @@ if (arguments.stop) {
 }
 
 const report = Timy.handleReport(json, arguments, now);
-if (report.length > 0) {
-    report.forEach(r => {
-        console.log('  - Duration:', formatSeconds(r.seconds) + 's', '  |   Project:', r.project, r.alias ? '(' + r.alias + ')' : '');
-        if (r.comments) {
-            r.comments.forEach(c => {
-                console.log('      -', c);
-            });
-        }
+if (report) {
+    function formatProject(p) {
+        return '  - Duration: ' + formatSeconds(p.seconds) + 's   |   Project: ' + p.project + (p.alias ? ' (' + p.alias + ')' : '');
+    }
+    console.log('Projects of the day:');
+    report.projects.forEach(r => {
+        console.log(formatProject(r));
+        (r.comments||[]).forEach(c => console.log('      -', c));
     });
-}
-if (arguments.report || arguments.r) {
-    if (hasCurrent(json)) {
-        const duration = formatDuration(new Date(json.current.start), now);
+    if (!report.current) {
         console.log('Including current:');
-        console.log('  - Duration:', duration + 's', '  |  Project:', json.current.project);
+        console.log(formatProject(report.current));
     } else {
         console.log('  - No pending task!');
     }
+    console.log('=========================');
+    console.log('TOTAL.......:', formatSeconds(report.seconds) + 's');
 }
 
 if (Timy.handleComment(json, arguments, error => console.error(error))) {

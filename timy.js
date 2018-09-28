@@ -45,7 +45,7 @@ module.exports = {
 
     handleReport: function (json, arguments, now = new Date()) {
         if (!arguments.report && !arguments.r) {
-            return [];
+            return undefined;
         }
 
         const summariesByProject = {};
@@ -53,7 +53,7 @@ module.exports = {
         // Iterate on tracks
         json.tracks.forEach(function (t) {
             if (new Date(t.stop).toDateString() === now.toDateString()) {
-                const summary = summariesByProject[t.project] || { seconds:0, comments:[] };
+                const summary = summariesByProject[t.project] || {seconds: 0, comments: []};
                 summariesByProject[t.project] = summary;
                 summary.seconds += Math.trunc((new Date(t.stop).getTime() - new Date(t.start).getTime()) / 1000);
                 if (t.comments && t.comments.length > 0) {
@@ -63,10 +63,12 @@ module.exports = {
         });
 
         // Add current track
+        var currentDuration = 0;
         if (json.current && json.current.project) {
             const project = json.current.project;
-            summariesByProject[project] = summariesByProject[project] || { seconds:0 };
-            summariesByProject[project].seconds += Math.trunc((new Date(now).getTime() - new Date(json.current.start).getTime()) / 1000);
+            summariesByProject[project] = summariesByProject[project] || {seconds: 0};
+            currentDuration = Math.trunc((new Date(now).getTime() - new Date(json.current.start).getTime()) / 1000);
+            summariesByProject[project].seconds += currentDuration;
         }
 
         // Create aliasesByProject
@@ -77,16 +79,28 @@ module.exports = {
         });
 
         // Build report
-        const report = [];
+        const projects = [];
         Object.keys(summariesByProject).forEach(function (project) {
-           const s = summariesByProject[project];
-           s.project = project;
-           const alias = aliasesByProject[project];
-           if (alias) {
-               s.alias = alias;
-           }
-           report.push(s)
+            const s = summariesByProject[project];
+            s.project = project;
+            const alias = aliasesByProject[project];
+            if (alias) {
+                s.alias = alias;
+            }
+            projects.push(s)
         });
+        const current = _hasCurrent(json) ? {
+            seconds: currentDuration,
+            project: json.current.project,
+            alias: aliasesByProject[json.current.project]
+        } : undefined;
+        const report = {
+            projects,
+            seconds: projects.reduce((acc, val) => acc + val.seconds, 0),
+        };
+        if (current) {
+            report.current = current;
+        }
         return report;
     },
 

@@ -13,3 +13,5 @@
 - [x] Display comments on report (#8)
 - [x] Remove comments on restart (#9)
 - [x] Do not add empty comments or alias if not present in tracks (#10)
+- [x] Total duration in the report (#11)
+- [ ] Backup file before write

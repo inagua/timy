@@ -6,7 +6,7 @@ describe('Timy', function () {
 
     var json;
 
-    beforeEach(function(){
+    beforeEach(function () {
         json = {
             "aliases": {
                 "gtechna": "112505",
@@ -52,7 +52,7 @@ describe('Timy', function () {
                     "comments": ["i"]
                 },
             ],
-            "current":     {
+            "current": {
                 "start": "2018-09-26T13:04:17.075Z",
                 "project": "110105",
                 "comments": [
@@ -67,16 +67,19 @@ describe('Timy', function () {
 
         it('should create an item per project for the current day if report argument is provided', function () {
             const now = new Date('2018-09-26T14:14:37.075Z');
-            expect(Timy.handleReport(json, minimist(['--report']), now)).to.eql([
-                { project:'110105', alias:'CivilCalendar', seconds:17532, comments: ["f", "g", "h"] },
-                { project:'112505', alias:'gtechna', seconds:5658, comments: ["d", "e", "i"]
-                }
-            ]);
+            expect(Timy.handleReport(json, minimist(['--report']), now)).to.eql({
+                projects: [
+                    {project: '110105', alias: 'CivilCalendar', seconds: 17532, comments: ["f", "g", "h"]},
+                    {project: '112505', alias: 'gtechna', seconds: 5658, comments: ["d", "e", "i"]}
+                ],
+                current: {project: "110105", alias: "CivilCalendar", seconds: 4220},
+                seconds: 17532 + 5658
+            });
         });
 
         it('should return nothing if report argument is missing', function () {
             const now = new Date('2018-09-26T14:14:37.075Z');
-            expect(Timy.handleReport(json, minimist(['--toto']), now)).to.eql([]);
+            expect(Timy.handleReport(json, minimist(['--toto']), now)).to.eql(undefined);
         });
 
         it('[BUGFIX] should not add empty comments or alias if not present in tracks', function () {
@@ -88,9 +91,10 @@ describe('Timy', function () {
                 "stop": "2018-09-28T13:04:17.075Z"
             });
 
-            expect(Timy.handleReport(json, minimist(['--report']), now)).to.eql([
-                { project:'GothamProject', seconds:4870, comments: [] }
-            ]);
+            expect(Timy.handleReport(json, minimist(['--report']), now)).to.eql({
+                projects: [{project: 'GothamProject', seconds: 4870, comments: []}],
+                seconds: 4870
+            });
         });
 
     });
