@@ -56,7 +56,9 @@ module.exports = {
                 const summary = summariesByProject[t.project] || { seconds:0, comments:[] };
                 summariesByProject[t.project] = summary;
                 summary.seconds += Math.trunc((new Date(t.stop).getTime() - new Date(t.start).getTime()) / 1000);
-                summary.comments = summary.comments.concat(t.comments);
+                if (t.comments && t.comments.length > 0) {
+                    summary.comments = summary.comments.concat(t.comments);
+                }
             }
         });
 
@@ -79,8 +81,11 @@ module.exports = {
         Object.keys(summariesByProject).forEach(function (project) {
            const s = summariesByProject[project];
            s.project = project;
-           s.alias = aliasesByProject[project];
-            report.push(s)
+           const alias = aliasesByProject[project];
+           if (alias) {
+               s.alias = alias;
+           }
+           report.push(s)
         });
         return report;
     },

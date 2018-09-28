@@ -79,6 +79,20 @@ describe('Timy', function () {
             expect(Timy.handleReport(json, minimist(['--toto']), now)).to.eql([]);
         });
 
+        it('[BUGFIX] should not add empty comments or alias if not present in tracks', function () {
+            const now = new Date('2018-09-28T14:14:37.075Z');
+            json.current = undefined;
+            json.tracks.push({
+                "start": "2018-09-28T11:43:06.945Z",
+                "project": "GothamProject",
+                "stop": "2018-09-28T13:04:17.075Z"
+            });
+
+            expect(Timy.handleReport(json, minimist(['--report']), now)).to.eql([
+                { project:'GothamProject', seconds:4870, comments: [] }
+            ]);
+        });
+
     });
 
 });
