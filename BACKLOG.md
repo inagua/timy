@@ -11,5 +11,4 @@
 - [ ] Can stop for a given time
 - [ ] Acknowledge commands (ex: the name of the *restart*ed project)
 - [x] Display comments on report (#8)
-
-#
+- [x] Remove comments on restart (#9)

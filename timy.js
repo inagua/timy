@@ -1,4 +1,9 @@
 const fs = require('fs');
+const Changed = true;
+
+function _hasCurrent(json) {
+    return json && json.current && json.current.project;
+}
 
 module.exports = {
 
@@ -12,6 +17,8 @@ module.exports = {
         }
         return JSON.parse(content);
     },
+
+    hasCurrent: _hasCurrent,
 
     handleComment: function (json, arguments, errorCallback) {
         if (arguments.comment || arguments.c) {
@@ -50,7 +57,6 @@ module.exports = {
                 summariesByProject[t.project] = summary;
                 summary.seconds += Math.trunc((new Date(t.stop).getTime() - new Date(t.start).getTime()) / 1000);
                 summary.comments = summary.comments.concat(t.comments);
-
             }
         });
 
@@ -74,9 +80,27 @@ module.exports = {
            const s = summariesByProject[project];
            s.project = project;
            s.alias = aliasesByProject[project];
-           report.push(s)
+            report.push(s)
         });
         return report;
+    },
+
+    handleRestart: function (json, arguments, now, callback) {
+        if (arguments.restart) {
+            if (_hasCurrent(json)) {
+                callback(!Changed, ' /!\\ Can not restart because a task is pending.');
+            } else if (!json.tracks || json.tracks.length == 0) {
+                callback(!Changed, ' /!\\ Can not restart because no closed task.');
+            } else {
+                json.current = Object.assign({}, json.tracks[json.tracks.length - 1]);
+                json.current.start = now;
+                json.current.stop = undefined;
+                json.current.comments = undefined;
+                callback(Changed, undefined);
+            }
+        } else {
+            callback(!Changed, undefined);
+        }
     }
 
 };

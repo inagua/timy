@@ -80,18 +80,12 @@ if (arguments.start) {
     hasChanged = true;
 }
 
-if (arguments.restart) {
-    if (hasCurrent(json)) {
-        console.error(' /!\\ Can not restart because a task is pending.');
-    } else if (!json.tracks || json.tracks.length == 0) {
-        console.error(' /!\\ Can not restart because no closed task.');
-    } else {
-        json.current = Object.assign({}, json.tracks[json.tracks.length - 1]);
-        json.current.start = now;
-        json.current.stop = undefined;
-        hasChanged = true;
+Timy.handleRestart(json, arguments, now, function (changed, error) {
+    hasChanged = hasChanged || changed;
+    if (error) {
+        console.error(error);
     }
-}
+});
 
 if (arguments.stop) {
     stopCurrent(json, now);
