@@ -15,3 +15,5 @@
 - [x] Do not add empty comments or alias if not present in tracks (#10)
 - [x] Total duration in the report (#11)
 - [ ] Backup file before write
+- [ ] Handle issue (#12)
+- [ ] Refactoring: uniformize callbacks

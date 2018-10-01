@@ -5,6 +5,22 @@ function _hasCurrent(json) {
     return json && json.current && json.current.project;
 }
 
+function _status(activated, changed, error) {
+    return { activated, changed, error };
+}
+
+// TODO: to test
+function _stopCurrent(json, now) {
+    const previous = json.current;
+    if (previous && previous.project) {
+        previous.stop = now;
+        json.tracks = json.tracks || [];
+        json.tracks.push(previous);
+        json.current = {};
+        hasChanged = true;
+    }
+}
+
 module.exports = {
 
     loadJson: function (path) {
@@ -102,6 +118,27 @@ module.exports = {
             report.current = current;
         }
         return report;
+    },
+
+    handleStart: function (json, arguments, now, callback) {
+        if (arguments.start) {
+            const alias = arguments.start;
+            const project = (json.aliases||[])[alias] || alias;
+
+            if (!project || alias === true) {
+                callback(_status(true, false, '/!\\ Project is missing!'), json);
+            } else {
+                _stopCurrent(json, now);
+
+                json.current = {
+                    "start": now,
+                    "project": project
+                };
+                callback(_status(true, true), json);
+            }
+        } else {
+            callback(_status(false, false), json);
+        }
     },
 
     handleRestart: function (json, arguments, now, callback) {

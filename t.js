@@ -15,10 +15,6 @@ if (!json) {
     return;
 }
 
-function hasCurrent(json) {
-    return json && json.current && json.current.project;
-}
-
 function stopCurrent(json, now) {
     const previous = json.current;
     if (previous && previous.project) {
@@ -32,10 +28,6 @@ function stopCurrent(json, now) {
 
 function formatSeconds(seconds) {
     return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss");
-}
-function formatDuration(start, stop) {
-    const seconds = (stop.getTime() - start.getTime()) / 1000;
-    return formatSeconds(seconds);
 }
 
 
@@ -67,18 +59,13 @@ if (arguments.alias || arguments.a) {
     }
 }
 
-if (arguments.start) {
-    const alias = arguments.start;
-    const project = json.aliases[alias] || alias;
 
-    stopCurrent(json, now);
-
-    json.current = {
-        "start": now,
-        "project": project
-    };
-    hasChanged = true;
-}
+Timy.handleStart(json, arguments, now, function (status, _json) {
+    hasChanged = hasChanged || status.changed;
+    if (status.error) {
+        console.error(status.error);
+    }
+});
 
 Timy.handleRestart(json, arguments, now, function (changed, error) {
     hasChanged = hasChanged || changed;
@@ -88,7 +75,7 @@ Timy.handleRestart(json, arguments, now, function (changed, error) {
 });
 
 if (arguments.stop) {
-    stopCurrent(json, now);
+    stopCurrent(json, now); // TODO: reuse new one
 }
 
 const report = Timy.handleReport(json, arguments, now);
@@ -96,10 +83,11 @@ if (report) {
     function formatProject(p) {
         return '  - Duration: ' + formatSeconds(p.seconds) + 's   |   Project: ' + p.project + (p.alias ? ' (' + p.alias + ')' : '');
     }
+
     console.log('Projects of the day:');
     report.projects.forEach(r => {
         console.log(formatProject(r));
-        (r.comments||[]).forEach(c => console.log('      -', c));
+        (r.comments || []).forEach(c => console.log('      -', c));
     });
     if (!report.current) {
         console.log('Including current:');
