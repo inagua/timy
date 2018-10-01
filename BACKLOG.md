@@ -17,3 +17,4 @@
 - [ ] Backup file before write
 - [ ] Handle issue (#12)
 - [ ] Refactoring: uniformize callbacks
+- [ ] List available alias
