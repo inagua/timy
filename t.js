@@ -89,7 +89,7 @@ if (report) {
         console.log(formatProject(r));
         (r.comments || []).forEach(c => console.log('      -', c));
     });
-    if (!report.current) {
+    if (report.current) {
         console.log('Including current:');
         console.log(formatProject(report.current));
     } else {
