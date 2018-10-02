@@ -9,7 +9,6 @@ function _status(activated, changed, error) {
     return { activated, changed, error };
 }
 
-// TODO: to test
 function _stopCurrent(json, now) {
     const previous = json.current;
     if (previous && previous.project) {
@@ -33,8 +32,6 @@ module.exports = {
         }
         return JSON.parse(content);
     },
-
-    hasCurrent: _hasCurrent,
 
     handleComment: function (json, arguments, errorCallback) {
         if (arguments.comment || arguments.c) {
@@ -168,8 +165,15 @@ module.exports = {
             if (!json || !json.current || !json.current.project) {
                 callback(_status(true, false, '/!\\ No current task to stop'), json);
             } else {
-                _stopCurrent(json, now);
-                callback(_status(true, true, undefined), json);
+                if (isNaN(arguments.stop) && arguments.stop !== true) {
+                    callback(_status(true, false, '/!\\ Parameter should be a count of minutes'), json);
+                } else {
+                    if (!isNaN(arguments.stop) && arguments.stop !== true) {
+                        now = new Date(now.getTime() - parseInt(arguments.stop, 10)*60*1000);
+                    }
+                    _stopCurrent(json, now);
+                    callback(_status(true, true, undefined), json);
+                }
             }
         } else {
             callback(_status(false, false, undefined), json);

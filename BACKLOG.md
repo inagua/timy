@@ -19,4 +19,4 @@
 - [ ] Refactoring: uniformize callbacks
 - [ ] List available alias
 - [x] BUGFIX: take comments of the current in the report (#13)
-- [ ] Stop with duration to remove (for missing cases) (#14)
+- [x] Stop with duration to remove (for missing cases) (#14)

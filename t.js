@@ -15,17 +15,6 @@ if (!json) {
     return;
 }
 
-function stopCurrent(json, now) {
-    const previous = json.current;
-    if (previous && previous.project) {
-        previous.stop = now;
-        json.tracks = json.tracks || [];
-        json.tracks.push(previous);
-        json.current = {};
-        hasChanged = true;
-    }
-}
-
 function formatSeconds(seconds) {
     return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss");
 }
@@ -107,7 +96,7 @@ if (Timy.handleComment(json, arguments, error => console.error(error))) {
 }
 
 if (arguments.help || arguments.sos || arguments.usage || process.argv.length == 2) {
-    console.log('$ node t --alias|a alias:project --start aliasOrProject --stop --restart --report|r --comment|c "some comment"');
+    console.log('$ node t --alias|a alias:project --start aliasOrProject --stop [minutesToRemove] --restart --report|r --comment|c "some comment"');
     console.log(' - comment are added only on current track if exit')
 }
 
