@@ -161,6 +161,18 @@ module.exports = {
         } else {
             callback(!Changed, undefined);
         }
-    }
+    },
 
+    handleStop: function (json, arguments, now, callback) {
+        if (arguments.stop) {
+            if (!json || !json.current || !json.current.project) {
+                callback(_status(true, false, '/!\\ No current task to stop'), json);
+            } else {
+                _stopCurrent(json, now);
+                callback(_status(true, true, undefined), json);
+            }
+        } else {
+            callback(_status(false, false, undefined), json);
+        }
+    }
 };

@@ -74,9 +74,12 @@ Timy.handleRestart(json, arguments, now, function (changed, error) {
     }
 });
 
-if (arguments.stop) {
-    stopCurrent(json, now); // TODO: reuse new one
-}
+Timy.handleStop(json, arguments, now, function (status, _jsons) {
+    hasChanged = hasChanged || status.changed;
+    if (status.error) {
+        console.error(status.error);
+    }
+});
 
 const report = Timy.handleReport(json, arguments, now);
 if (report) {
