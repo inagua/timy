@@ -82,9 +82,13 @@ module.exports = {
         var currentDuration = 0;
         if (json.current && json.current.project) {
             const project = json.current.project;
-            summariesByProject[project] = summariesByProject[project] || {seconds: 0};
-            currentDuration = Math.trunc((new Date(now).getTime() - new Date(json.current.start).getTime()) / 1000);
-            summariesByProject[project].seconds += currentDuration;
+            const summary = summariesByProject[project] || {seconds: 0};
+            summariesByProject[project] = summary;
+            currentDuration = Math.trunc((new Date(now).getTime() - new Date(json.current.start).getTime()) / 1000)
+            summary.seconds += currentDuration;
+            if (json.current.comments && json.current.comments.length > 0) {
+                summary.comments = (summary.comments||[]).concat(json.current.comments);
+            }
         }
 
         // Create aliasesByProject

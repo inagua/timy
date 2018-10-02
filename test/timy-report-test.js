@@ -55,9 +55,6 @@ describe('Timy', function () {
             "current": {
                 "start": "2018-09-26T13:04:17.075Z",
                 "project": "110105",
-                "comments": [
-                    "Setup local environment"
-                ],
             }
 
         };
@@ -80,6 +77,26 @@ describe('Timy', function () {
         it('should return nothing if report argument is missing', function () {
             const now = new Date('2018-09-26T14:14:37.075Z');
             expect(Timy.handleReport(json, minimist(['--toto']), now)).to.eql(undefined);
+        });
+
+        it('should add comments of the current to the report', function () {
+            const now = new Date('2018-09-26T14:14:37.075Z');
+            const json = {
+                aliases: [],
+                tracks: [],
+                current: {
+                    start: "2018-09-26T13:04:17.075Z",
+                    project: "110105",
+                    comments: [ "Setup local environment" ]
+                }
+            };
+            expect(Timy.handleReport(json, minimist(['--report']), now)).to.eql({
+                projects: [
+                    {project: '110105', seconds: 4220, comments: ["Setup local environment"]},
+                ],
+                current: {project: "110105", seconds: 4220, alias: undefined },
+                seconds: 4220
+            });
         });
 
         it('[BUGFIX] should not add empty comments or alias if not present in tracks', function () {
