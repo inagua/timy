@@ -52,8 +52,8 @@ module.exports = class Command {
 
     handle(json, parameters, now) {}
 
-    status(activated, changed, json) {
-        return {activated, changed, json};
+    status(activated, modified, json) {
+        return {activated, modified, json};
     }
 
     error(activated, error) {
@@ -69,6 +69,10 @@ module.exports = class Command {
             json.current = {};
             // hasChanged = true;
         }
+    }
+
+    hasCurrent(json) {
+        return json && json.current && json.current.project;
     }
 
     static get Activated() {

@@ -5,21 +5,21 @@ const StartCommand = require('../commands/start.command');
 describe('Start Command', function () {
 
     const now = new Date();
-    var start;
+    var startCommand;
 
     beforeEach(function () {
-        start = new StartCommand();
+        startCommand = new StartCommand();
     });
 
     describe('.handle()', function () {
 
         it('should create new current according to provided project', function (done) {
-            start.handle({}, minimist(['--start', 'ConquerTheWorld']), now)
+            startCommand.handle({}, minimist(['--start', 'ConquerTheWorld']), now)
                 .then(
                     status => {
                         expect(status).to.eql({
                             activated: true,
-                            changed: true,
+                            modified: true,
                             json: {
                                 "current": {
                                     start: now,
@@ -28,13 +28,12 @@ describe('Start Command', function () {
                             }
                         });
                         done();
-
                     }
                 );
         });
 
         it('should provide an error if no value is provided for the start argument', function (done) {
-            start.handle({}, minimist(['--start']), undefined).catch(error => {
+            startCommand.handle({}, minimist(['--start']), undefined).catch(error => {
                 expect(error).to.eql({activated: true, error: '/!\\ Project is missing!'});
                 done();
             });
@@ -42,10 +41,10 @@ describe('Start Command', function () {
 
         it('should create new current according to defined alias if matching', function (done) {
             const json = {aliases: {minus: 'ConquerTheWorld'}};
-            start.handle(json, minimist(['--start', 'minus']), now).then(status => {
+            startCommand.handle(json, minimist(['--start', 'minus']), now).then(status => {
                 expect(status).to.eql({
                     activated: true,
-                    changed: true,
+                    modified: true,
                     json: {
                         aliases: {minus: 'ConquerTheWorld'},
                         current: {start: now, project: "ConquerTheWorld"}
@@ -57,10 +56,10 @@ describe('Start Command', function () {
 
         it('should stop existing current before create new one', function (done) {
             const json = {current: {project: "110105", start: "2018-09-26T13:04:17.075Z"}};
-            start.handle(json, minimist(['--start', 'ConquerTheWorld']), now).then(status => {
+            startCommand.handle(json, minimist(['--start', 'ConquerTheWorld']), now).then(status => {
                 expect(status).to.eql({
                     activated: true,
-                    changed: true,
+                    modified: true,
                     json: {
                         tracks: [
                             {project: "110105", start: "2018-09-26T13:04:17.075Z", stop: now}
@@ -73,10 +72,10 @@ describe('Start Command', function () {
         });
 
         it('should do nothing if but no start argument provided', function (done) {
-            start.handle({}, minimist(['--toto', 'ConquerTheWorld']), undefined).then(status => {
+            startCommand.handle({}, minimist(['--toto', 'ConquerTheWorld']), undefined).then(status => {
                 expect(status).to.eql({
                     activated: false,
-                    changed: false,
+                    modified: false,
                     json: {}
                 });
                 done();
@@ -89,7 +88,7 @@ describe('Start Command', function () {
         it('should complete minimist options and CLI usage', function () {
             const minimistOptions = {};
             const usage = {};
-            start.cli(minimistOptions, usage);
+            startCommand.cli(minimistOptions, usage);
             expect(minimistOptions).to.eql({alias: {}});
             expect(usage).to.eql({command: '--start AliasOrProject', comments: []});
         });
