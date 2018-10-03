@@ -15,8 +15,9 @@
 - [x] Do not add empty comments or alias if not present in tracks (#10)
 - [x] Total duration in the report (#11)
 - [ ] Handle issue (#12)
-- [ ] Refactoring: uniformize callbacks
 - [ ] List available alias
 - [x] BUGFIX: take comments of the current in the report (#13)
 - [x] Stop with duration to remove (for missing cases) (#14)
 - [x] Backup file before write (#15)
+- [ ] Refactoring: extract each command as class (#16)
+- [ ] Refactoring: extract replace callbacks with promises. (#17)
