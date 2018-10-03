@@ -1,5 +1,8 @@
 const fs = require('fs');
+const fsExtra = require('fs-extra');
 const Changed = true;
+const moment = require('moment');
+const path = require('path');
 
 function _hasCurrent(json) {
     return json && json.current && json.current.project;
@@ -31,6 +34,17 @@ module.exports = {
             return undefined;
         }
         return JSON.parse(content);
+    },
+
+    backupJson: function (jsonPath) {
+        const yesterday = moment().add(-1, 'days').format('YYMMDD');
+        const fileExtension = path.extname(jsonPath);
+        const backupPath = jsonPath.replace(fileExtension, '-' + yesterday + fileExtension);
+        if (!fs.existsSync(backupPath)) {
+            fsExtra.copySync(jsonPath, backupPath);
+            return true;
+        }
+        return false;
     },
 
     handleComment: function (json, arguments, errorCallback) {

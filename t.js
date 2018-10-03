@@ -7,8 +7,10 @@ var moment = require('moment');
 const Timy = require('./timy');
 const now = new Date();
 
-const laodedJson = Timy.loadJson(jsonFile);
-const json = Timy.handleSetup(laodedJson, arguments, error => console.error(error));
+const loadedJson = Timy.loadJson(jsonFile);
+Timy.backupJson(jsonFile);
+
+const json = Timy.handleSetup(loadedJson, arguments, error => console.error(error));
 if (!json) {
     console.error(' /!\\ Try to use the --setup argument');
     console.error(' /!\\ Program exited: nothing done!');

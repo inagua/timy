@@ -14,9 +14,9 @@
 - [x] Remove comments on restart (#9)
 - [x] Do not add empty comments or alias if not present in tracks (#10)
 - [x] Total duration in the report (#11)
-- [ ] Backup file before write
 - [ ] Handle issue (#12)
 - [ ] Refactoring: uniformize callbacks
 - [ ] List available alias
 - [x] BUGFIX: take comments of the current in the report (#13)
 - [x] Stop with duration to remove (for missing cases) (#14)
+- [x] Backup file before write (#15)
