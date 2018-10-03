@@ -50,11 +50,14 @@ module.exports = class Command {
         usage.comments = usage.comments.concat(this.comments);
     }
 
-    handle(json, parameters, now) {
+    handle(json, parameters, now) {}
+
+    status(activated, changed, json) {
+        return {activated, changed, json};
     }
 
-    status(activated, changed, error) {
-        return {activated, changed, error};
+    error(activated, error) {
+        return {activated, error};
     }
 
     stopCurrent(json, now) {

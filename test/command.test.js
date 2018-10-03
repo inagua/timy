@@ -16,7 +16,7 @@ describe('Command', function () {
         );
     });
 
-    describe('.usage()', function () {
+    describe('.cli()', function () {
         it('should complete minimist options and CLI usage', function () {
             const minimistOptions = {};
             const usage = {};

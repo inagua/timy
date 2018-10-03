@@ -9,7 +9,7 @@
 - [x] Setup Unit Tests (#4)
 - [x] Add comment on current track (#5)
 - [ ] Can stop for a given time
-- [ ] Acknowledge commands (ex: the name of the *restart*ed project)
+- [ ] Acknowledge commands (ex: the name of the *restart*ed prcoject)
 - [x] Display comments on report (#8)
 - [x] Remove comments on restart (#9)
 - [x] Do not add empty comments or alias if not present in tracks (#10)
