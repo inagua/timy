@@ -57,6 +57,26 @@ if (arguments.alias || arguments.a) {
 }
 
 
+// const commands = [
+//     new StartCommand(),
+//     new RestartCommand(),
+//     new StopCommand(),
+//     new CommentCommand()
+// ];
+//
+// const cli = {};
+// commands.forEach(c => c.cli(cli));
+//
+// var previousPromise = commands.pop().handle(json, arguments, now);
+// commands.forEach(c => {
+//     previousPromise = previousPromise.then(status => {
+//         hasChanged = hasChanged || status.modified;
+//         c.handle(json, arguments, now);
+//     });
+// });
+// previousPromise.catch(error => console.error(error.error));
+
+
 new StartCommand().handle(json, arguments, now)
     .then(status => {
         hasChanged = hasChanged || status.modified; // StartCommand
