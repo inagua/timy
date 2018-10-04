@@ -2,10 +2,10 @@ const expect = require('chai').expect;
 const minimist = require('minimist');
 const RestartCommand = require('../commands/restart.command');
 
-const now = new Date();
 
 describe('Restart Command', function () {
 
+    const now = new Date();
     var json;
     var restartCommand;
 
@@ -27,7 +27,22 @@ describe('Restart Command', function () {
         restartCommand = new RestartCommand();
     });
 
-    describe('.handle', function () {
+
+    describe('.cli()', function () {
+        it('should complete minimist options and CLI usage', function () {
+            const minimistOptions = {};
+            const usage = {};
+            restartCommand.cli(minimistOptions, usage);
+            expect(minimistOptions).to.eql({alias: {}});
+            expect(usage).to.eql({
+                command: '--restart undefined',
+                comments: []
+            });
+        });
+    });
+
+
+    describe('.handle()', function () {
 
         it('1/ should exit on error if a current task exist WITH report parameter', function (done) {
             json.current = {

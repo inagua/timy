@@ -9,6 +9,7 @@ const now = new Date();
 
 const StartCommand = require('./commands/start.command');
 const RestartCommand = require('./commands/restart.command');
+const StopCommand = require('./commands/stop.command');
 
 const loadedJson = Timy.loadJson(jsonFile);
 Timy.backupJson(jsonFile);
@@ -73,6 +74,10 @@ new StartCommand().handle(json, arguments, now)
     })
     .then(status => {
         hasChanged = hasChanged || status.modified; // RestartCommand
+        return new StopCommand().handle(json, arguments, now);
+    })
+    .then(status => {
+        hasChanged = hasChanged || status.modified; // LastCommand
         if (hasChanged) {
             fs.writeFileSync(jsonFile, JSON.stringify(json), 'utf8');
         }
@@ -82,12 +87,12 @@ new StartCommand().handle(json, arguments, now)
 
 
 
-Timy.handleStop(json, arguments, now, function (status, _jsons) {
-    hasChanged = hasChanged || status.changed;
-    if (status.error) {
-        console.error(status.error);
-    }
-});
+// Timy.handleStop(json, arguments, now, function (status, _jsons) {
+//     hasChanged = hasChanged || status.changed;
+//     if (status.error) {
+//         console.error(status.error);
+//     }
+// });
 
 const report = Timy.handleReport(json, arguments, now);
 if (report) {

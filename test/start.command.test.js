@@ -11,6 +11,21 @@ describe('Start Command', function () {
         startCommand = new StartCommand();
     });
 
+
+    describe('.cli()', function () {
+        it('should complete minimist options and CLI usage', function () {
+            const minimistOptions = {};
+            const usage = {};
+            startCommand.cli(minimistOptions, usage);
+            expect(minimistOptions).to.eql({alias: {}});
+            expect(usage).to.eql({
+                command: '--start AliasOrProject',
+                comments: []
+            });
+        });
+    });
+
+
     describe('.handle()', function () {
 
         it('should create new current according to provided project', function (done) {
@@ -82,16 +97,6 @@ describe('Start Command', function () {
             });
         });
 
-    });
-
-    describe('.usage()', function () {
-        it('should complete minimist options and CLI usage', function () {
-            const minimistOptions = {};
-            const usage = {};
-            startCommand.cli(minimistOptions, usage);
-            expect(minimistOptions).to.eql({alias: {}});
-            expect(usage).to.eql({command: '--start AliasOrProject', comments: []});
-        });
     });
 
 });
