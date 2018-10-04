@@ -47,18 +47,6 @@ module.exports = {
         return false;
     },
 
-    handleComment: function (json, arguments, errorCallback) {
-        if (arguments.comment || arguments.c) {
-            if (json && json.current && json.current.project) {
-                json.current.comments = json.current.comments || [];
-                json.current.comments.push(arguments.comment || arguments.c);
-                return true;
-            } else if (errorCallback) {
-                errorCallback(' /!\\ Can not add comment because there is no current track.');
-            }
-        }
-    },
-
     handleSetup: function (json, arguments) {
         if (arguments.setup) {
             return {
@@ -135,62 +123,4 @@ module.exports = {
         return report;
     },
 
-    // handleStart: function (json, arguments, now, callback) {
-    //     if (arguments.start) {
-    //         const alias = arguments.start;
-    //         const project = (json.aliases||[])[alias] || alias;
-    //
-    //         if (!project || alias === true) {
-    //             callback(_status(true, false, '/!\\ Project is missing!'), json);
-    //         } else {
-    //             _stopCurrent(json, now);
-    //
-    //             json.current = {
-    //                 "start": now,
-    //                 "project": project
-    //             };
-    //             callback(_status(true, true), json);
-    //         }
-    //     } else {
-    //         callback(_status(false, false), json);
-    //     }
-    // },
-
-    // handleRestart: function (json, arguments, now, callback) {
-    //     if (arguments.restart) {
-    //         if (_hasCurrent(json)) {
-    //             callback(!Changed, ' /!\\ Can not restart because a task is pending.');
-    //         } else if (!json.tracks || json.tracks.length == 0) {
-    //             callback(!Changed, ' /!\\ Can not restart because no closed task.');
-    //         } else {
-    //             json.current = Object.assign({}, json.tracks[json.tracks.length - 1]);
-    //             json.current.start = now;
-    //             json.current.stop = undefined;
-    //             json.current.comments = undefined;
-    //             callback(Changed, undefined);
-    //         }
-    //     } else {
-    //         callback(!Changed, undefined);
-    //     }
-    // },
-
-    // handleStop: function (json, arguments, now, callback) {
-    //     if (arguments.stop) {
-    //         if (!json || !json.current || !json.current.project) {
-    //             callback(_status(true, false, '/!\\ No current task to stop'), json);
-    //         } else {
-    //             if (isNaN(arguments.stop) && arguments.stop !== true) {
-    //                 callback(_status(true, false, '/!\\ Parameter should be a count of minutes'), json);
-    //             } else {
-    //                 if (!isNaN(arguments.stop) && arguments.stop !== true) {
-    //                     now = new Date(now.getTime() - parseInt(arguments.stop, 10)*60*1000);
-    //                 }
-    //                 _stopCurrent(json, now);
-    //                 callback(_status(true, true, undefined), json);
-    //             }
-    //         }
-    //     } else {
-    //         callback(_status(false, false, undefined), json);
-    //     }
-    // }
 };

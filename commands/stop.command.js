@@ -11,7 +11,7 @@ module.exports = class StopCommand extends Command {
     handle(json, minimist, now) {
         return new Promise((resolve, reject) => {
             if (super.isActivated(minimist)) {
-                if (!json || !json.current || !json.current.project) {
+                if (!super.hasCurrent(json)) {
                     reject('/!\\ No current task to stop');
                 } else {
                     if (isNaN(minimist.stop) && minimist.stop !== true) {

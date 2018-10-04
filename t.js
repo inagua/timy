@@ -10,6 +10,8 @@ const now = new Date();
 const StartCommand = require('./commands/start.command');
 const RestartCommand = require('./commands/restart.command');
 const StopCommand = require('./commands/stop.command');
+const CommentCommand = require('./commands/comment.command');
+
 
 const loadedJson = Timy.loadJson(jsonFile);
 Timy.backupJson(jsonFile);
@@ -55,18 +57,6 @@ if (arguments.alias || arguments.a) {
 }
 
 
-// Timy.handleStart(json, arguments, now, function (status, _json) {
-//     hasChanged = hasChanged || status.changed;
-//     if (status.error) {
-//         console.error(status.error);
-//     }
-// });
-// Timy.handleRestart(json, arguments, now, function (changed, error) {
-//     hasChanged = hasChanged || changed;
-//     if (error) {
-//         console.error(error);
-//     }
-// });
 new StartCommand().handle(json, arguments, now)
     .then(status => {
         hasChanged = hasChanged || status.modified; // StartCommand
@@ -77,6 +67,10 @@ new StartCommand().handle(json, arguments, now)
         return new StopCommand().handle(json, arguments, now);
     })
     .then(status => {
+        hasChanged = hasChanged || status.modified; // RestartCommand
+        return new CommentCommand().handle(json, arguments, now);
+    })
+    .then(status => {
         hasChanged = hasChanged || status.modified; // LastCommand
         if (hasChanged) {
             fs.writeFileSync(jsonFile, JSON.stringify(json), 'utf8');
@@ -85,14 +79,6 @@ new StartCommand().handle(json, arguments, now)
     .catch(error => console.error(error.error))
 ;
 
-
-
-// Timy.handleStop(json, arguments, now, function (status, _jsons) {
-//     hasChanged = hasChanged || status.changed;
-//     if (status.error) {
-//         console.error(status.error);
-//     }
-// });
 
 const report = Timy.handleReport(json, arguments, now);
 if (report) {
@@ -115,9 +101,9 @@ if (report) {
     console.log('TOTAL.......:', formatSeconds(report.seconds) + 's');
 }
 
-if (Timy.handleComment(json, arguments, error => console.error(error))) {
-    hasChanged = true;
-}
+// if (Timy.handleComment(json, arguments, error => console.error(error))) {
+//     hasChanged = true;
+// }
 
 if (arguments.help || arguments.sos || arguments.usage || process.argv.length == 2) {
     console.log('$ node t --alias|a alias:project --start aliasOrProject --stop [minutesToRemove] --restart --report|r --comment|c "some comment"');
