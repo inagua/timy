@@ -68,11 +68,14 @@ if (arguments.alias || arguments.a) {
 // });
 new StartCommand().handle(json, arguments, now)
     .then(status => {
-        hasChanged = hasChanged || status.modified;
+        hasChanged = hasChanged || status.modified; // StartCommand
         return new RestartCommand().handle(json, arguments, now);
     })
     .then(status => {
-        hasChanged = hasChanged || status.modified;
+        hasChanged = hasChanged || status.modified; // RestartCommand
+        if (hasChanged) {
+            fs.writeFileSync(jsonFile, JSON.stringify(json), 'utf8');
+        }
     })
     .catch(error => console.error(error.error))
 ;
