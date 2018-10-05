@@ -7,6 +7,7 @@ var moment = require('moment');
 const Timy = require('./timy');
 const now = new Date();
 
+const AliasCommand = require('./commands/alias.command');
 const StartCommand = require('./commands/start.command');
 const RestartCommand = require('./commands/restart.command');
 const StopCommand = require('./commands/stop.command');
@@ -28,36 +29,37 @@ function formatSeconds(seconds) {
 }
 
 
-function tokensForAlias(a) {
-    if (a) {
-        const tokens = a.split(':');
-        if (tokens && tokens.length == 2) {
-            return tokens;
-        }
-    }
-    return undefined;
-}
+// function tokensForAlias(a) {
+//     if (a) {
+//         const tokens = a.split(':');
+//         if (tokens && tokens.length == 2) {
+//             return tokens;
+//         }
+//     }
+//     return undefined;
+// }
 
 var hasChanged = false;
 
-if (arguments.alias || arguments.a) {
-    const tokens = tokensForAlias(arguments.alias || arguments.a);
-    if (tokens) {
-        const tokens = a.split(':');
-        const alias = tokens[0].toLowerCase();
-        const project = tokens[1];
-        json.aliases = json.aliases || {};
-        json.aliases[alias] = project
-        hasChanged = true;
-
-    } else {
-        console.error(' /!\\ Invalid parameter for alias aka alias:project');
-
-    }
-}
+// if (arguments.alias || arguments.a) {
+//     const tokens = tokensForAlias(arguments.alias || arguments.a);
+//     if (tokens) {
+//         const tokens = a.split(':');
+//         const alias = tokens[0].toLowerCase();
+//         const project = tokens[1];
+//         json.aliases = json.aliases || {};
+//         json.aliases[alias] = project
+//         hasChanged = true;
+//
+//     } else {
+//         console.error(' /!\\ Invalid parameter for alias aka alias:project');
+//
+//     }
+// }
 
 
 // const commands = [
+//     new AliasCommand(),
 //     new StartCommand(),
 //     new RestartCommand(),
 //     new StopCommand(),
@@ -87,11 +89,15 @@ new StartCommand().handle(json, arguments, now)
         return new StopCommand().handle(json, arguments, now);
     })
     .then(status => {
-        hasChanged = hasChanged || status.modified; // RestartCommand
+        hasChanged = hasChanged || status.modified; // StopCommand
         return new CommentCommand().handle(json, arguments, now);
     })
     .then(status => {
-        hasChanged = hasChanged || status.modified; // LastCommand
+        hasChanged = hasChanged || status.modified; // CommentCommand
+        return new AliasCommand().handle(json, arguments, now);
+    })
+    .then(status => {
+        hasChanged = hasChanged || status.modified; // AliasCommand
         if (hasChanged) {
             fs.writeFileSync(jsonFile, JSON.stringify(json), 'utf8');
         }
