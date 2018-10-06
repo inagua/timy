@@ -1,5 +1,4 @@
 - [x] lower case aliases (#3)
-- [ ] replace existing aliases with project when add alias
 - [x] handle un-existing file (#6)
 - [x] daily report (cumulate same project tracks) (#7)
 - [x] Restart last stopped track (update usage) (#2)
@@ -9,7 +8,7 @@
 - [x] Setup Unit Tests (#4)
 - [x] Add comment on current track (#5)
 - [ ] Can stop for a given time
-- [ ] Acknowledge commands (ex: the name of the *restart*ed prcoject)
+- [ ] Acknowledge commands (ex: the name of the *restart*ed project)
 - [x] Display comments on report (#8)
 - [x] Remove comments on restart (#9)
 - [x] Do not add empty comments or alias if not present in tracks (#10)
@@ -20,4 +19,5 @@
 - [x] Stop with duration to remove (for missing cases) (#14)
 - [x] Backup file before write (#15)
 - [ ] Refactoring: extract each command as class (#16)
-- [ ] Refactoring: extract replace callbacks with promises. (#17)
+- [ ] Refactoring: extract replace callbacks with promises (#17)
+- [x] Replace existing aliases with project when add alias and error if alias already exist, not case sensitive (#18)

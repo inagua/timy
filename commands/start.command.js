@@ -11,11 +11,11 @@ module.exports = class StartCommand extends Command {
     handle(json, minimist, now) {
         return new Promise((resolve, reject) => {
             if (super.isActivated(minimist)) {
-                const alias = minimist.start;
-                const project = (json.aliases || [])[alias] || alias;
-                if (!project || alias === true) {
+                const projectOrAlias = minimist.start;
+                if (!projectOrAlias || projectOrAlias === true) {
                     reject(super.error(Activated, '/!\\ Project is missing!'));
                 } else {
+                    const project = super.getProjectForAlias(json, projectOrAlias);
                     super.stopCurrent(json, now);
                     json.current = {"start": now, "project": project};
                     resolve(super.status(Activated, Modified, json));

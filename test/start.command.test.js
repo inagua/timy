@@ -36,10 +36,7 @@ describe('Start Command', function () {
                             activated: true,
                             modified: true,
                             json: {
-                                "current": {
-                                    start: now,
-                                    project: "ConquerTheWorld"
-                                }
+                                "current": { start: now, project: "ConquerTheWorld" }
                             }
                         });
                         done();
@@ -55,13 +52,13 @@ describe('Start Command', function () {
         });
 
         it('should create new current according to defined alias if matching', function (done) {
-            const json = {aliases: {minus: 'ConquerTheWorld'}};
+            const json = {aliases: {'Minus': 'ConquerTheWorld'}};
             startCommand.handle(json, minimist(['--start', 'minus']), now).then(status => {
                 expect(status).to.eql({
                     activated: true,
                     modified: true,
                     json: {
-                        aliases: {minus: 'ConquerTheWorld'},
+                        aliases: {'Minus': 'ConquerTheWorld'},
                         current: {start: now, project: "ConquerTheWorld"}
                     }
                 });

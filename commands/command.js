@@ -75,6 +75,14 @@ module.exports = class Command {
         return json && json.current && json.current.project;
     }
 
+    getProjectForAlias(json, alias) {
+        const aliases = json.aliases || {};
+        const keys = Object.keys(aliases);
+        const aliasLowerCase = alias.toLowerCase();
+        const wantedKey = keys.find(k => k.toLowerCase() == aliasLowerCase);
+        return aliases[wantedKey] || alias;
+    }
+
     static get Activated() {
         return Activated;
     }

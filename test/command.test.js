@@ -41,4 +41,13 @@ describe('Command', function () {
         });
     });
 
+    describe('.getProjectForAlias()', function () {
+        it('should return the project corresponding to a defined alias not case sensitive, or the given alias elsewhere', function () {
+            expect(command.getProjectForAlias({aliases:{'alias':'project'}}, 'alias')).to.eql('project');
+            expect(command.getProjectForAlias({aliases:{'SomeAlias':'project'}}, 'SomeAlias')).to.eql('project');
+            expect(command.getProjectForAlias({aliases:{'SomeAlias':'project'}}, 'somealias')).to.eql('project');
+            expect(command.getProjectForAlias({aliases:{'SomeAlias':'project'}}, 'Another')).to.eql('Another');
+        });
+    });
+
 });
