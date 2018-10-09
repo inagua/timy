@@ -38,3 +38,7 @@ Run unit tests:
 ```
 npm run autotest
 ```
+
+# Amazon URL
+
+- [http://timy-prod.us-west-2.elasticbeanstalk.com/api/v1/health](http://timy-prod.us-west-2.elasticbeanstalk.com/api/v1/health)
