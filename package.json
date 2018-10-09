@@ -4,13 +4,15 @@
   "description": "Slack app for time tracking service",
   "main": "index.js",
   "scripts": {
+    "start": "node server",
     "test": "mocha test",
     "autotest": "mocha test --watch"
   },
   "author": "jacques@inagua.ch",
   "license": "ISC",
   "dependencies": {
-    "fs-extra": "^7.0.0",
+    "express": "4.16.3",
+    "fs-extra": "7.0.0",
     "minimist": "1.2.0",
     "moment": "2.22.2"
   },
