@@ -3,7 +3,7 @@ var router = express.Router();
 
 var start = require('./start');
 var actions = require('./actions');
-var options = require('./optionsactions');
+var options = require('./options');
 
 // http://timy-prod.us-west-2.elasticbeanstalk.com/api/v1/slack/...
 router.use('/', start);
