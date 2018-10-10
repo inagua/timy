@@ -6,7 +6,7 @@ router.get('/start', function(req, res) {
 });
 
 router.post('/start', function(req, res) {
-    res.json({ message: 'start command!' });
+    res.json({ message: 'start command!', query: JSON.stringify(req.query), body: JSON.stringify(req.body) });
 });
 
 module.exports = router;
