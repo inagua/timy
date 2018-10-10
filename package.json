@@ -2,9 +2,9 @@
   "name": "timy-slack",
   "version": "1.0.0",
   "description": "Slack app for time tracking service",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
-    "start": "node server",
+    "start": "node server/index.js",
     "test": "mocha test",
     "autotest": "mocha test --watch"
   },

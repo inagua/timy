@@ -22,3 +22,4 @@
 - [ ] Refactoring: extract replace callbacks with promises (#17)
 - [x] Replace existing aliases with project when add alias and error if alias already exist, not case sensitive (#18)
 - [x] Setup API server (#19)
+- [ ] Setup Slack App (#20)
