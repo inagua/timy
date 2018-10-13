@@ -11,6 +11,7 @@
   "author": "jacques@inagua.ch",
   "license": "ISC",
   "dependencies": {
+    "@slack/client": "4.8.0",
     "express": "4.16.3",
     "fs-extra": "7.0.0",
     "minimist": "1.2.0",
