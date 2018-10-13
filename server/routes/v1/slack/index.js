@@ -4,15 +4,17 @@ var router = express.Router();
 var start = require('./start');
 var actions = require('./actions');
 var options = require('./options');
+var events = require('./events');
 
 // http://timy-prod.us-west-2.elasticbeanstalk.com/api/v1/slack/...
 router.use('/', start);
 router.use('/', actions);
 router.use('/', options);
+router.use('/', events);
 
 module.exports = router;
 
-const body = {
+const body = { // actions
     "token": "jTsNQ5HnQ9aKdFg6Rmw6vx47",
     "team_id": "T1623MCPR",
     "team_domain": "inagua",
