@@ -8,7 +8,7 @@ const web = new WebClient(token);
 
 router.post('/events', function(req, res) {
 
-    console.log('>>>>> events!');
+    console.log('>>>>> Events:', new Date(), ' - ', req.body);
 
     // https://api.slack.com/events/url_verification
     if (req.body && req.body.type === "url_verification") {
