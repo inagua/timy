@@ -2,11 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 const { WebClient } = require('@slack/client');
-const token = process.env.SLACK_TOKEN || 'jTsNQ5HnQ9aKdFg6Rmw6vx47';
+const token = process.env.SLACK_TOKEN || 'xoxb-40071726807-452641863731-oIMuBKqUHBJTcETBJv7xVhl5';
 const web = new WebClient(token);
 
 
 router.post('/events', function(req, res) {
+
+    console.log('>>>>> events!');
 
     // https://api.slack.com/events/url_verification
     if (req.body && req.body.type === "url_verification") {
@@ -26,6 +28,13 @@ router.post('/events', function(req, res) {
             })
             .catch(console.error);
     }
+});
+
+router.get('/events', function(req, res) {
+
+    console.log('>>>>> Ping!');
+    res.send('Ping!');
+
 });
 
 module.exports = router;
