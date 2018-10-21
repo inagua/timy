@@ -15,29 +15,31 @@ router.post('/events', function(req, res) {
         res.send(req.body.challenge);
 
     } else {
-        console.log('>>>>> (2) NotVerification:', req.body);
-        // res.json({ message: 'events!', body: JSON.stringify(req.body) });
-// This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
+        // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
         const conversationId = req.body.channel || 'CDJ5NJL3S'; // timy-test
+
+        console.log('>>>>> (2) Send message to:', conversationId, req.body);
+        // res.json({ message: 'events!', body: JSON.stringify(req.body) });
 // See: https://api.slack.com/methods/chat.postMessage
         web.chat.postMessage({ channel: conversationId, text: JSON.stringify(req.body) })
             .then((res) => {
                 // `res` contains information about the posted message
-                console.log('>>>>> (3) Message sent: ', res.ts);
+                console.log('>>>>> (3) Message sent:', conversationId, res.ts);
 
                 const secondChannel = req.body.event.user;
+                console.log('>>>>> (4) Send 2nd message to:', secondChannel, req.body);
                 web.chat.postMessage({ channel: secondChannel, text: JSON.stringify(req.body) })
                     .then((res) => {
-                        console.log('>>>>> (4) 2nd Message sent: ', res.ts);
-                        res.sendStatus(200);
+                        console.log('>>>>> (5) 2nd Message sent to:', res.ts);
+                        // res.sendStatus(200);
                     })
                     .catch(err => {
-                        console.error('>>>>> (5) 2nd ERROR: ', err);
+                        console.error('>>>>> (6) 2nd ERROR: ', err);
                     });
 
             })
             .catch(err => {
-                console.error('>>>>> (6) ERROR: ', err);
+                console.error('>>>>> (7) ERROR: ', err);
             });
     }
 });
