@@ -8,7 +8,7 @@ const web = new WebClient(token);
 
 router.post('/events', function (req, res) {
 
-    console.log('>>>>> (1) Events:', new Date(), ` - token:${token} - `, req.body);
+    console.log('>>>>> (a1) Events:', new Date(), ` - token:${token} - `, req.body);
 
     // https://api.slack.com/events/url_verification
     if (req.body && req.body.type === "url_verification") {
@@ -16,30 +16,14 @@ router.post('/events', function (req, res) {
 
     } else {
         // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
-        const conversationId = req.body.channel || 'CDJ5NJL3S'; // timy-test
-
-        console.log('>>>>> (2) Send message to:', conversationId, req.body);
-        // res.json({ message: 'events!', body: JSON.stringify(req.body) });
-// See: https://api.slack.com/methods/chat.postMessage
-        web.chat.postMessage({channel: conversationId, text: "Hy I'am Timy and I heard your message!"})
+        const event = req.body.event;
+        const conversationId = event.channel;
+        web.chat.postMessage({channel: conversationId, text: "Hy I'am Timy, nice to meet you... I am analysing:" + event.text})
             .then((res) => {
-                // `res` contains information about the posted message
-                console.log('>>>>> (3) Message sent:', conversationId, res.ts);
-
-                const secondChannel = req.body.event.user;
-                console.log('>>>>> (4) Send 2nd message to:', secondChannel, req.body);
-                web.chat.postMessage({channel: secondChannel, text: "Nice to meet you!"})
-                    .then((res) => {
-                        console.log('>>>>> (5) 2nd Message sent to:', res.ts);
-                        // res.sendStatus(200);
-                    })
-                    .catch(err => {
-                        console.error('>>>>> (6) 2nd ERROR: ', err);
-                    });
-
+                console.error('>>>>> (a2) SUCCESS: message sent', res);
             })
             .catch(err => {
-                console.error('>>>>> (7) ERROR: ', err);
+                console.error('>>>>> (a3) ERROR: ', err);
             });
     }
 });
