@@ -2,20 +2,20 @@ var express = require('express');
 var router = express.Router();
 
 const { WebClient } = require('@slack/client');
-const token = process.env.SLACK_TOKEN || 'xoxb-40071726807-452641863731-oIMuBKqUHBJTcETBJv7xVhl5';
+const token = process.env.SLACK_TOKEN || 'xoxb-40071726807-452641863731-oIMuBKqUHBJTcETBJv7xVhl5'; // jTsNQ5HnQ9aKdFg6Rmw6vx47
 const web = new WebClient(token);
 
 
 router.post('/events', function(req, res) {
 
-    console.log('>>>>> Events:', new Date(), ' - ', req.body);
+    console.log('>>>>> Events:', new Date(), ` - token:${token} - `, req.body);
 
     // https://api.slack.com/events/url_verification
     if (req.body && req.body.type === "url_verification") {
         res.send(req.body.challenge);
 
     } else {
-        console.log('>>>>> ', req.body);
+        console.log('>>>>> NotVerification:', req.body);
         // res.json({ message: 'events!', body: JSON.stringify(req.body) });
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
         const conversationId = req.body.channel || 'C1232456';
@@ -23,10 +23,12 @@ router.post('/events', function(req, res) {
         web.chat.postMessage({ channel: conversationId, text: JSON.stringify(req.body) })
             .then((res) => {
                 // `res` contains information about the posted message
-                console.log('Message sent: ', res.ts);
+                console.log('>>>>> Message sent: ', res.ts);
                 res.sendStatus(200);
             })
-            .catch(console.error);
+            .catch(err => {
+                console.error('>>>>> ERROR: ', err);
+            });
     }
 });
 
