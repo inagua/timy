@@ -8,14 +8,14 @@ const web = new WebClient(token);
 
 router.post('/events', function(req, res) {
 
-    console.log('>>>>> Events:', new Date(), ` - token:${token} - `, req.body);
+    console.log('>>>>> (1) Events:', new Date(), ` - token:${token} - `, req.body);
 
     // https://api.slack.com/events/url_verification
     if (req.body && req.body.type === "url_verification") {
         res.send(req.body.challenge);
 
     } else {
-        console.log('>>>>> NotVerification:', req.body);
+        console.log('>>>>> (2) NotVerification:', req.body);
         // res.json({ message: 'events!', body: JSON.stringify(req.body) });
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
         const conversationId = req.body.channel || 'CDJ5NJL3S'; // timy-test
@@ -23,23 +23,22 @@ router.post('/events', function(req, res) {
         web.chat.postMessage({ channel: conversationId, text: JSON.stringify(req.body) })
             .then((res) => {
                 // `res` contains information about the posted message
-                console.log('>>>>> Message sent: ', res.ts);
-                res.sendStatus(200);
+                console.log('>>>>> (3) Message sent: ', res.ts);
+
+                const secondChannel = req.body.event.user;
+                web.chat.postMessage({ channel: secondChannel, text: JSON.stringify(req.body) })
+                    .then((res) => {
+                        console.log('>>>>> (4) 2nd Message sent: ', res.ts);
+                        res.sendStatus(200);
+                    })
+                    .catch(err => {
+                        console.error('>>>>> (5) 2nd ERROR: ', err);
+                    });
+
             })
             .catch(err => {
-                console.error('>>>>> ERROR: ', err);
+                console.error('>>>>> (6) ERROR: ', err);
             });
-
-        const secondChannel = req.body.event.user;
-        web.chat.postMessage({ channel: secondChannel, text: JSON.stringify(req.body) })
-            .then((res) => {
-                console.log('>>>>> 2nd Message sent: ', res.ts);
-                res.sendStatus(200);
-            })
-            .catch(err => {
-                console.error('>>>>> 2nd ERROR: ', err);
-            });
-
     }
 });
 
