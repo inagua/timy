@@ -18,7 +18,7 @@ router.post('/events', function(req, res) {
         console.log('>>>>> NotVerification:', req.body);
         // res.json({ message: 'events!', body: JSON.stringify(req.body) });
 // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
-        const conversationId = req.body.channel || 'C1232456';
+        const conversationId = req.body.channel || 'CDJ5NJL3S'; // timy-test
 // See: https://api.slack.com/methods/chat.postMessage
         web.chat.postMessage({ channel: conversationId, text: JSON.stringify(req.body) })
             .then((res) => {
@@ -29,6 +29,17 @@ router.post('/events', function(req, res) {
             .catch(err => {
                 console.error('>>>>> ERROR: ', err);
             });
+
+        const secondChannel = req.body.event.user;
+        web.chat.postMessage({ channel: secondChannel, text: JSON.stringify(req.body) })
+            .then((res) => {
+                console.log('>>>>> 2nd Message sent: ', res.ts);
+                res.sendStatus(200);
+            })
+            .catch(err => {
+                console.error('>>>>> 2nd ERROR: ', err);
+            });
+
     }
 });
 
