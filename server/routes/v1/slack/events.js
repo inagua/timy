@@ -8,22 +8,22 @@ const web = new WebClient(token);
 
 router.post('/events', function (req, res) {
 
-    console.log('>>>>> (a1) Events:', new Date(), ` - token:${token} - `, req.body);
+    console.log('>>>>> (b1) Events:', new Date(), ` - token:${token} - `, req.body);
+    const event = req.body.event;
 
     // https://api.slack.com/events/url_verification
     if (req.body && req.body.type === "url_verification") {
         res.send(req.body.challenge);
 
-    } else {
+    } else if (event.user == 'U1635ND18') {
         // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
-        const event = req.body.event;
         const conversationId = event.channel;
-        web.chat.postMessage({channel: conversationId, text: "Hy I'am Timy, nice to meet you... I am analysing:" + event.text})
+        web.chat.postMessage({channel: conversationId, text: "Hy I'am TIMy, nice to meet you... I am analysing your command:" + event.text})
             .then((res) => {
-                console.error('>>>>> (a2) SUCCESS: message sent', res);
+                console.error('>>>>> (b2) SUCCESS: message sent with response:', res);
             })
             .catch(err => {
-                console.error('>>>>> (a3) ERROR: ', err);
+                console.error('>>>>> (b3) ERROR: ', err);
             });
     }
 });
