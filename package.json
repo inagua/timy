@@ -4,7 +4,7 @@
   "description": "Slack app for time tracking service",
   "main": "server/index.js",
   "scripts": {
-    "start": "nodemon server/index.js",
+    "start": "node server/index.js",
     "test": "mocha test",
     "autotest": "mocha test --watch"
   },
