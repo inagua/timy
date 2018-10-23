@@ -1,30 +1,97 @@
+var _ = require('lodash');
 var express = require('express');
 var router = express.Router();
 
+
+//
+// SLACK
+//
 const {WebClient} = require('@slack/client');
 const token = process.env.SLACK_TOKEN || 'xoxb-40071726807-452641863731-oIMuBKqUHBJTcETBJv7xVhl5'; // jTsNQ5HnQ9aKdFg6Rmw6vx47
 const web = new WebClient(token);
 
 
+//
+// AMAZON
+//
+const S3Config = {
+    Bucket: 'elasticbeanstalk-us-west-2-711404857168'
+};
+const S3 = require('./aws-s3');
+const s3 = new S3(S3Config.Bucket);
+
+function isMessageFromBot(event) {
+    return event.bot_id || event.subtype == 'bot_message';
+}
+
+function isLocal(req) {
+    return _.get(req, 'headers.host').indexOf('localhost') == 0;
+}
+
+function sendAnswerTo(answer, conversationId, req, res) {
+    if (isLocal(req)) {
+        res.send(answer);
+
+    } else {
+        web.chat.postMessage({
+            channel: conversationId,
+            text: answer
+        })
+            .then((res) => {
+                console.error('(c2) SUCCESS: message sent with response:', res);
+            })
+            .catch(err => {
+                console.error('(c3) ERROR: ', err);
+            });
+
+    }
+}
+
+function handleEvent(message, now) {
+    const team = _.get(message, 'team_id');
+    const user = _.get(message, 'event.user');
+    const command = _.get(message, 'event.text');
+
+    if (team && user && command) {
+        // key = 'trackings/slack/iem/timy-jco-181003.json';
+        const key = s3.bucketForTeamAndUser(team, user);
+        s3.loadJSON(key, function (loadedJson) {
+            const json = loadedJson || {};
+            json.commands = json.commands || [];
+            json.commands.push({
+                command: command,
+                date: now
+            });
+            // console.log('>>>>> JSON:', json)
+            s3.saveJSON(json, key);
+        })
+    } else {
+        console.error('[ERROR] handleEvent: Missing one of team_id, event.user and event.text.');
+    }
+
+}
+
 router.post('/events', function (req, res) {
 
-    console.log('>>>>> (b1) Events:', new Date(), ` - token:${token} - `, req.body);
+    const now = new Date();
+    console.log('(c1) /events:', new Date(), ` - req:`, req.body);
     const event = req.body.event;
 
     // https://api.slack.com/events/url_verification
     if (req.body && req.body.type === "url_verification") {
         res.send(req.body.challenge);
 
-    } else if (event.user == 'U1635ND18') {
-        // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
-        const conversationId = event.channel;
-        web.chat.postMessage({channel: conversationId, text: "Hy I'am TIMy, nice to meet you... I am analysing your command:" + event.text})
-            .then((res) => {
-                console.error('>>>>> (b2) SUCCESS: message sent with response:', res);
-            })
-            .catch(err => {
-                console.error('>>>>> (b3) ERROR: ', err);
-            });
+    } else {
+        if (!isMessageFromBot(event)) {
+
+            handleEvent(req.body, now);
+
+            // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
+            const conversationId = event.channel;
+            var answer = 'Received!';
+            sendAnswerTo(answer, conversationId, req, res);
+        }
+        //console.log('>>>>> URL:', req.headers);
     }
 });
 
@@ -93,6 +160,68 @@ const a = {
     "event_time": 1540145929,
     "authed_users": ["UDAJVRDMH"]
 };
+
+
+const aReceivedFromTimy = {
+    token: 'jTsNQ5HnQ9aKdFg6Rmw6vx47',
+    team_id: 'T1623MCPR',
+    api_app_id: 'ADAJTG9K5',
+    event:
+        {
+            text: 'Hy I\'am TIMy, nice to meet you... I am analysing your command:start HiOnMonday4',
+            username: 'TIMy',
+            bot_id: 'BDAT53JJ1',
+            type: 'message',
+            subtype: 'bot_message',
+            ts: '1540206490.000200',
+            channel: 'DDAT53KPX',
+            event_ts: '1540206490.000200',
+            channel_type: 'im'
+        },
+    type: 'event_callback',
+    event_id: 'EvDJMPP0GZ',
+    event_time: 1540206490,
+    authed_users: ['UDAJVRDMH']
+};
+
+const aReceivedFromJacques = {
+    token: 'jTsNQ5HnQ9aKdFg6Rmw6vx47',
+    team_id: 'T1623MCPR',
+    api_app_id: 'ADAJTG9K5',
+    event:
+        {
+            type: 'message',
+            user: 'U1635ND18',
+            text: 'start HiOnMonday4',
+            client_msg_id: '71a6acf8-81b7-43e5-8361-315edd10dc18',
+            ts: '1540206490.000100',
+            channel: 'DDAT53KPX',
+            event_ts: '1540206490.000100',
+            channel_type: 'im'
+        },
+    type: 'event_callback',
+    event_id: 'EvDKFXK4S1',
+    event_time: 1540206490,
+    authed_users: ['UDAJVRDMH']
+};
+
+const aSentByTimyResponse = {
+    ok: true,
+    channel: 'DDAT53KPX',
+    ts: '1540206493.000100',
+    message:
+        {
+            text: 'Hy I\'am TIMy, nice to meet you... I am analysing your command:start HiOnMonday4',
+            username: 'TIMy',
+            bot_id: 'BDAT53JJ1',
+            type: 'message',
+            subtype: 'bot_message',
+            ts: '1540206493.000100'
+        },
+    scopes: ['identify', 'bot:basic'],
+    acceptedScopes: ['chat:write:bot', 'post']
+};
+
 
 /*
 const { WebClient } = require('@slack/client');
