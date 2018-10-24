@@ -14,7 +14,7 @@ const CommentCommand = require('./comment.command');
  * const minimistOptions = {};
  * const usage = {};
  * engine.cli(minimistOptions, usage);
- * engine.handle(json, minimist(['--alias', 'MyAlias:MyProject']))
+ * engine.handle(json, minimist(['--alias', 'MyAlias:MyProject']), now)
  *     .then(status => {
  *         // { activated, modified, json }
  *     });

@@ -20,6 +20,21 @@ const S3Config = {
 const S3 = require('./aws-s3');
 const s3 = new S3(S3Config.Bucket);
 
+
+//
+// TIMY
+//
+const Engine = require('../../../../commands/engine');
+const engine = new Engine();
+const minimistOptions = {};
+const usage = {};
+const minimist = require('minimist');
+
+
+
+
+
+
 function isMessageFromBot(event) {
     return event.bot_id || event.subtype == 'bot_message';
 }
@@ -47,7 +62,7 @@ function sendAnswerTo(answer, conversationId, req, res) {
     }
 }
 
-function handleEvent(message, now) {
+function handleEvent(message, now, succewssCB, errorCB) {
     const team = _.get(message, 'team_id');
     const user = _.get(message, 'event.user');
     const command = _.get(message, 'event.text');
@@ -57,16 +72,32 @@ function handleEvent(message, now) {
         const key = s3.bucketForTeamAndUser(team, user);
         s3.loadJSON(key, function (loadedJson) {
             const json = loadedJson || {};
-            json.commands = json.commands || [];
-            json.commands.push({
-                command: command,
-                date: now
-            });
-            // console.log('>>>>> JSON:', json)
-            s3.saveJSON(json, key);
+
+            const tokens = command.split(' ');
+            engine.handle(json, minimist(tokens), now)
+                .then(status => { // { activated, modified, json }
+
+                    let result = '';
+                    if (!status.activated) {
+                        engine.cli(minimistOptions, usage);
+                        result = usage;
+
+                    } else if (status.modified) {
+                        s3.saveJSON(json, key);
+                        result = 'Command saved!';
+
+                    }
+                    succewssCB(result);
+                });
+
         })
     } else {
-        console.error('[ERROR] handleEvent: Missing one of team_id, event.user and event.text.');
+        const error = '[ERROR] handleEvent: Missing one of team_id, event.user and event.text.';
+        if (errorCB) {
+            errorCB(error);
+        } else {
+            console.error(error);
+        }
     }
 
 }
@@ -83,15 +114,13 @@ router.post('/events', function (req, res) {
 
     } else {
         if (!isMessageFromBot(event)) {
+            handleEvent(req.body, now, function (success) {
+                // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
+                const conversationId = event.channel;
+                sendAnswerTo(success, conversationId, req, res);
+            });
 
-            handleEvent(req.body, now);
-
-            // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
-            const conversationId = event.channel;
-            var answer = 'Received!';
-            sendAnswerTo(answer, conversationId, req, res);
         }
-        //console.log('>>>>> URL:', req.headers);
     }
 });
 
