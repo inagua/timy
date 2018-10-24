@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const minimist = require('minimist');
-const AliasCommand = require('../commands/alias.command');
+const AliasCommand = require('../../commands/alias.command');
 
 
 describe('Alias Command', function () {
