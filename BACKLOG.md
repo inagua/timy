@@ -23,3 +23,4 @@
 - [x] Replace existing aliases with project when add alias and error if alias already exist, not case sensitive (#18)
 - [x] Setup API server (#19)
 - [ ] Setup Slack App (#20)
+- [ ] Create Engine class (#21)
