@@ -5,6 +5,7 @@ const Engine = require('../../commands/engine');
 
 describe('Engine', function () {
 
+    const now = new Date();
     var engine;
     var jsonWithCurrent;
 
@@ -28,7 +29,7 @@ describe('Engine', function () {
             engine.cli(minimistOptions, usage);
             // expect(minimistOptions).to.eql({alias: {"a": "alias"}, string: ["alias"]});
             expect(usage).to.eql({
-                command: '--alias|a \"alias:project\"--comment \"Some comment\"',
+                command: '--alias|a \"alias:project\"--restart undefined--comment \"Some comment\"',
                 comments: []
             });
         });
@@ -37,11 +38,11 @@ describe('Engine', function () {
 
     describe('.handle()', function () {
 
-        it('should add new alias to a project with *alias* argument', function (done) {
+        it('should handle ALIAS command', function (done) {
             engine.handle({}, minimist(['--alias', 'MyAlias:MyProject']))
                 .then(status => {
 
-                    console.log('>>>>> 1:', JSON.stringify(status));
+                    // console.log('>>>>> 1:', JSON.stringify(status));
 
                     expect(status).to.eql({
                         activated: true,
@@ -52,7 +53,35 @@ describe('Engine', function () {
                 })
         });
 
-        it('should put comment on current track', function (done) {
+        it('should handle RESTART command', function (done) {
+            const json = {
+                "aliases": {
+                    "myprojectalias": "112505",
+                },
+                "tracks": [
+                    {
+                        "start": "2018-09-26T06:53:13.716Z",
+                        "project": "ConquerTheWorld",
+                        "stop": "2018-09-26T07:06:22.141Z"
+                    },
+                ],
+                "current": {}
+            };
+            engine.handle(json, minimist(['--restart']), now).then(status => {
+                expect(status.activated).to.eql(true);
+                expect(status.modified).to.eql(true);
+                expect(status.json.current).to.eql({
+                    project: "ConquerTheWorld",
+                    start: now,
+                    stop: undefined,
+                    comments: undefined
+                });
+                done();
+            });
+        });
+
+
+        it('should handle COMMENT command', function (done) {
             const comment = 'make some refactoring';
             engine.handle(jsonWithCurrent, minimist(['--comment', comment]))
                 .then(status => {

@@ -1,5 +1,6 @@
 const AliasCommand = require('./alias.command');
 const CommentCommand = require('./comment.command');
+const RestartCommand = require('./restart.command');
 
 module.exports = class Engine {
 
@@ -7,7 +8,7 @@ module.exports = class Engine {
         this.commands = [
             new AliasCommand(),
             // new StartCommand(),
-            // new RestartCommand(),
+            new RestartCommand(),
             // new StopCommand(),
             new CommentCommand()
         ];
@@ -18,17 +19,21 @@ module.exports = class Engine {
     }
 
     handle(json, minimist, now) {
-        return new AliasCommand().handle(json, minimist, now)
-            .then(status => {
-                return new CommentCommand().handle(json, minimist, now)
+        const cc = [...this.commands];
+        const first = cc.pop();
 
+        let promise = first.handle(json, minimist, now);
+        cc.forEach(c => {
+            promise = promise.then(status => {
+                return c.handle(json, minimist, now)
                     .then(status2 => new Promise((resolve, reject) => resolve({
                         activated: status.activated || status2.activated,
                         modified: status.modified || status2.modified,
                         json: status2.json
                     })));
-            })
-            // .catch(error => console.error(error.error))
-            ;
+            });
+        });
+
+        return promise;
     }
 };

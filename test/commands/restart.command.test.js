@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const minimist = require('minimist');
-const RestartCommand = require('../commands/restart.command');
+const RestartCommand = require('../../commands/restart.command');
 
 
 describe('Restart Command', function () {
