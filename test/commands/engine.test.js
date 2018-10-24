@@ -29,8 +29,10 @@ describe('Engine', function () {
             engine.cli(minimistOptions, usage);
             // expect(minimistOptions).to.eql({alias: {"a": "alias"}, string: ["alias"]});
             expect(usage).to.eql({
-                command: '--alias|a \"alias:project\"--restart undefined--comment \"Some comment\"',
-                comments: []
+                command: "--alias|a \"alias:project\"--start AliasOrProject--restart undefined--stop [minutesToRemove]--comment \"Some comment\"",
+                comments: [
+                    "minutesToRemove: optional count of minutes to remove to current date as stop date."
+                ]
             });
         });
     });
@@ -51,6 +53,22 @@ describe('Engine', function () {
                     });
                     done();
                 })
+        });
+
+        it('should handle START command', function (done) {
+            engine.handle({}, minimist(['--start', 'ConquerTheWorld']), now)
+                .then(
+                    status => {
+                        expect(status).to.eql({
+                            activated: true,
+                            modified: true,
+                            json: {
+                                "current": { start: now, project: "ConquerTheWorld" }
+                            }
+                        });
+                        done();
+                    }
+                );
         });
 
         it('should handle RESTART command', function (done) {
@@ -80,6 +98,26 @@ describe('Engine', function () {
             });
         });
 
+        it('should handle STOP command', function (done) {
+            engine.handle({
+                current: {
+                    project: 'GothamProject',
+                    start: "2018-09-26T06:53:13.716Z"
+                }
+            }, minimist(['--stop']), now)
+                .then(status => {
+                    expect(status).to.eql({
+                            activated: true,
+                            modified: true,
+                            json: {
+                                current: {},
+                                tracks: [{project: "GothamProject", start: "2018-09-26T06:53:13.716Z", stop: now}]
+                            }
+                        }
+                    );
+                    done();
+                })
+        });
 
         it('should handle COMMENT command', function (done) {
             const comment = 'make some refactoring';

@@ -1,15 +1,17 @@
 const AliasCommand = require('./alias.command');
-const CommentCommand = require('./comment.command');
+const StartCommand = require('./start.command');
 const RestartCommand = require('./restart.command');
+const StopCommand = require('./stop.command');
+const CommentCommand = require('./comment.command');
 
 module.exports = class Engine {
 
     constructor() {
         this.commands = [
             new AliasCommand(),
-            // new StartCommand(),
+            new StartCommand(),
             new RestartCommand(),
-            // new StopCommand(),
+            new StopCommand(),
             new CommentCommand()
         ];
     }

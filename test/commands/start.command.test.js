@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 const minimist = require('minimist');
-const StartCommand = require('../commands/start.command');
+const StartCommand = require('../../commands/start.command');
 
 describe('Start Command', function () {
 
