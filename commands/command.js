@@ -44,7 +44,9 @@ module.exports = class Command {
         if (this.aliases && this.aliases.length > 0) {
             usage.command += '|' + this.aliases.join('|');
         }
-        usage.command += ' ' + this.value;
+        if (this.value) {
+            usage.command += ' ' + this.value;
+        }
 
         usage.comments = usage.comments || [];
         usage.comments = usage.comments.concat(this.comments);
@@ -52,8 +54,12 @@ module.exports = class Command {
 
     handle(json, parameters, now) {}
 
-    status(activated, modified, json) {
-        return {activated, modified, json};
+    status(activated, modified, json, report) {
+        const status = {activated, modified, json};
+        if (report) {
+            status.report = report;
+        }
+        return status;
     }
 
     error(activated, error) {

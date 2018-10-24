@@ -3,6 +3,7 @@ const StartCommand = require('./start.command');
 const RestartCommand = require('./restart.command');
 const StopCommand = require('./stop.command');
 const CommentCommand = require('./comment.command');
+const ReportCommand = require('./report.command');
 
 /**
  * Usage:
@@ -30,7 +31,8 @@ module.exports = class Engine {
             new StartCommand(),
             new RestartCommand(),
             new StopCommand(),
-            new CommentCommand()
+            new CommentCommand(),
+            new ReportCommand()
         ];
     }
 
@@ -46,11 +48,17 @@ module.exports = class Engine {
         cc.forEach(c => {
             promise = promise.then(status => {
                 return c.handle(json, minimist, now)
-                    .then(status2 => new Promise((resolve, reject) => resolve({
-                        activated: status.activated || status2.activated,
-                        modified: status.modified || status2.modified,
-                        json: status2.json
-                    })));
+                    .then(status2 => new Promise((resolve, reject) => {
+                        const s = {
+                            activated: status.activated || status2.activated,
+                            modified: status.modified || status2.modified,
+                            json: status2.json
+                        };
+                        if (status.report || status2.report) {
+                            s.report = status.report || status2.report;
+                        }
+                        resolve(s)
+                    }));
             });
         });
 

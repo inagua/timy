@@ -35,7 +35,7 @@ describe('Restart Command', function () {
             restartCommand.cli(minimistOptions, usage);
             expect(minimistOptions).to.eql({alias: {}});
             expect(usage).to.eql({
-                command: ' --restart undefined',
+                command: ' --restart',
                 comments: []
             });
         });

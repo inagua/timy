@@ -27,9 +27,8 @@ describe('Engine', function () {
             const minimistOptions = {};
             const usage = {};
             engine.cli(minimistOptions, usage);
-            // expect(minimistOptions).to.eql({alias: {"a": "alias"}, string: ["alias"]});
             expect(usage).to.eql({
-                command: " --alias|a \"alias:project\" --start AliasOrProject --restart undefined --stop [minutesToRemove] --comment \"Some comment\"",
+                command: " --alias|a \"alias:project\" --start AliasOrProject --restart --stop [minutesToRemove] --comment \"Some comment\" --report|r",
                 comments: [
                     "minutesToRemove: optional count of minutes to remove to current date as stop date."
                 ]
@@ -138,6 +137,71 @@ describe('Engine', function () {
                 });
         });
 
+        it('should handle REPORT command', function (done) {
+            const now4report = new Date('2018-10-24T14:14:37.075Z');
+            const json = {
+                aliases: {'BondProject': '007'},
+                tracks: [
+                    {
+                        project: "110105",
+                        start: "2018-09-26T13:04:17.075Z",
+                        stop: "2018-09-30T13:04:17.075Z",
+                        comments: ['a comment']
+                    },
+                    {
+                        project: "110105",
+                        start: "2018-09-26T13:04:17.075Z",
+                        stop: now4report, // same date as today
+                        comments: ['something']
+                    }
+                ],
+                current: {
+                    project: "BondProject",
+                    start: "2018-09-26T06:53:13.716Z",
+                    comments: ['another comment']
+                }
+            };
+            engine.handle(json, minimist(['--report']), now4report)
+                .then(status => {
+                    console.log('>>>>> 1:', JSON.stringify(status));
+                    expect(status).to.eql({
+                            "activated": true,
+                            "modified": true,
+                            "json": {
+                                "aliases": {"BondProject": "007"},
+                                "tracks": [
+                                    {
+                                        "project": "110105",
+                                        "start": "2018-09-26T13:04:17.075Z",
+                                        "stop": "2018-09-30T13:04:17.075Z",
+                                        "comments": ['a comment']
+                                    },
+                                    {
+                                        "project": "110105",
+                                        "start": "2018-09-26T13:04:17.075Z",
+                                        "stop": now4report,
+                                        "comments": ['something']
+                                    }
+                                ],
+                                "current": {
+                                    "project": "BondProject",
+                                    "start": "2018-09-26T06:53:13.716Z",
+                                    "comments": ["another comment"]
+                                }
+                            },
+                            "report": {
+                                "projects": [
+                                    {"seconds": 2423420, "comments": ["something"], "project": "110105"},
+                                    {"seconds": 2445683, "comments": ["another comment"], "project": "BondProject"}
+                                ],
+                                "seconds": 4869103,
+                                "current": {"seconds": 2445683, "project": "BondProject", "alias": undefined}
+                            }
+                        }
+                    );
+                    done();
+                })
+        });
 
 
     });
