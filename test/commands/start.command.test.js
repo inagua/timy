@@ -83,7 +83,7 @@ describe('Start Command', function () {
             });
         });
 
-        it('should do nothing if but no start argument provided', function (done) {
+        it('should do nothing if no start argument provided', function (done) {
             startCommand.handle({}, minimist(['--toto', 'ConquerTheWorld']), undefined).then(status => {
                 expect(status).to.eql({
                     activated: false,

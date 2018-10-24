@@ -163,7 +163,7 @@ describe('Engine', function () {
             };
             engine.handle(json, minimist(['--report']), now4report)
                 .then(status => {
-                    console.log('>>>>> 1:', JSON.stringify(status));
+                    // console.log('>>>>> 1:', JSON.stringify(status));
                     expect(status).to.eql({
                             "activated": true,
                             "modified": true,
