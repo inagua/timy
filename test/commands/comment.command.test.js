@@ -26,7 +26,7 @@ describe('Comment Command', function () {
             commentCommand.cli(minimistOptions, usage);
             expect(minimistOptions).to.eql({alias: {}});
             expect(usage).to.eql({
-                command: '--comment \"Some comment\"',
+                command: ' --comment \"Some comment\"',
                 comments: []
             });
         });

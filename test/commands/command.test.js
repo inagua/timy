@@ -23,7 +23,7 @@ describe('Command', function () {
             command.cli(minimistOptions, usage);
             expect(minimistOptions).to.eql({alias: {s: 'some', y: 'some'}, string: ['some', 'synonym']});
             expect(usage).to.eql({
-                command: '--some|synonym|s|y AliasOrProject',
+                command: ' --some|synonym|s|y AliasOrProject',
                 comments: ["--some: to create some interesting content!!"]
             });
         });

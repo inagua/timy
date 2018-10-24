@@ -29,7 +29,7 @@ describe('Engine', function () {
             engine.cli(minimistOptions, usage);
             // expect(minimistOptions).to.eql({alias: {"a": "alias"}, string: ["alias"]});
             expect(usage).to.eql({
-                command: "--alias|a \"alias:project\"--start AliasOrProject--restart undefined--stop [minutesToRemove]--comment \"Some comment\"",
+                command: " --alias|a \"alias:project\" --start AliasOrProject --restart undefined --stop [minutesToRemove] --comment \"Some comment\"",
                 comments: [
                     "minutesToRemove: optional count of minutes to remove to current date as stop date."
                 ]
@@ -52,7 +52,7 @@ describe('Engine', function () {
                         json: {aliases: {'MyAlias': 'MyProject'}}
                     });
                     done();
-                })
+                });
         });
 
         it('should handle START command', function (done) {

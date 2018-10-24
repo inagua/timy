@@ -4,6 +4,24 @@ const RestartCommand = require('./restart.command');
 const StopCommand = require('./stop.command');
 const CommentCommand = require('./comment.command');
 
+/**
+ * Usage:
+ *
+ * ```
+ * const Engine = require('.../commands/engine');
+ *
+ * engine = new Engine();
+ * const minimistOptions = {};
+ * const usage = {};
+ * engine.cli(minimistOptions, usage);
+ * engine.handle(json, minimist(['--alias', 'MyAlias:MyProject']))
+ *     .then(status => {
+ *         // { activated, modified, json }
+ *     });
+ * ```
+ *
+ * @type {module.Engine}
+ */
 module.exports = class Engine {
 
     constructor() {

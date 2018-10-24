@@ -19,7 +19,7 @@ describe('Stop Command', function () {
             stopCommand.cli(minimistOptions, usage);
             expect(minimistOptions).to.eql({alias: {}});
             expect(usage).to.eql({
-                command: '--stop [minutesToRemove]',
+                command: ' --stop [minutesToRemove]',
                 comments: ["minutesToRemove: optional count of minutes to remove to current date as stop date."]
             });
         });

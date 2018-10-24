@@ -19,7 +19,7 @@ describe('Start Command', function () {
             startCommand.cli(minimistOptions, usage);
             expect(minimistOptions).to.eql({alias: {}});
             expect(usage).to.eql({
-                command: '--start AliasOrProject',
+                command: ' --start AliasOrProject',
                 comments: []
             });
         });

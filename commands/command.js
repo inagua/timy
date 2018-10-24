@@ -40,7 +40,7 @@ module.exports = class Command {
         this.aliases.forEach(a => minimistOptions.alias[a] = first);
 
         usage.command = usage.command || '';
-        usage.command += '--' + this.options.join('|');
+        usage.command += ' --' + this.options.join('|');
         if (this.aliases && this.aliases.length > 0) {
             usage.command += '|' + this.aliases.join('|');
         }

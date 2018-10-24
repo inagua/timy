@@ -19,7 +19,7 @@ describe('Alias Command', function () {
             aliasCommand.cli(minimistOptions, usage);
             expect(minimistOptions).to.eql({alias: {"a": "alias"}, string: ["alias"]});
             expect(usage).to.eql({
-                command: '--alias|a \"alias:project\"',
+                command: ' --alias|a \"alias:project\"',
                 comments: []
             });
         });
