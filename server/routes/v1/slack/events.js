@@ -1,6 +1,7 @@
-var _ = require('lodash');
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const _ = require('lodash');
+const minimist = require('minimist');
 
 
 //
@@ -24,12 +25,12 @@ const s3 = new S3(S3Config.Bucket);
 //
 // TIMY
 //
+const ReportCommand = require('../../../../commands/report.command');
+const reportCommand = new ReportCommand();
 const Engine = require('../../../../commands/engine');
 const engine = new Engine();
 const minimistOptions = {};
 const usage = {};
-const minimist = require('minimist');
-
 
 
 
@@ -80,11 +81,12 @@ function handleEvent(message, now, succewssCB, errorCB) {
                     let result = '';
                     if (!status.activated) {
                         engine.cli(minimistOptions, usage);
-                        result = usage;
+                        result = 'Sorry Buddy, but I do not understand. This is my commands:' + JSON.stringify(usage);
 
                     } else if (status.modified) {
                         s3.saveJSON(json, key);
-                        result = 'Command saved!';
+                        const report = reportCommand.buildReport(json, now);
+                        result = 'Done Buddy! This is the status:' + JSON.stringify(report);
 
                     }
                     succewssCB(result);
