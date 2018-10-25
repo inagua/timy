@@ -1,57 +1,28 @@
 const jsonPath = 'timy-jco.json';
+const now = new Date();
 
 const arguments = require('minimist')(process.argv.slice(2));
 const moment = require('moment');
-const fs = require('fs');
-const fsExtra = require('fs-extra');
-const path = require('path');
 
-const Encoding = 'utf8';
-const now = new Date();
 const Engine = require('./commands/engine');
-
 const engine = new Engine();
 
-const json = loadJson(jsonPath);
-backupJson(jsonPath);
+const FileStore = require('./storage/file.store');
+const fileStore = new FileStore(jsonPath);
+const json = fileStore.loadJson();
 
 function formatSeconds(seconds) {
     return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss");
 }
 
-function loadJson(path) {
-    var content;
-    try {
-        content = fs.readFileSync(path, Encoding);
-    } catch (e) {
-        console.error(' /!\\ Json file not found at:', e.path);
-        return undefined;
-    }
-    return JSON.parse(content);
-}
-
-function backupJson(jsonPath) {
-    const yesterday = moment().add(-1, 'days').format('YYMMDD');
-    const fileExtension = path.extname(jsonPath);
-    const backupPath = jsonPath.replace(fileExtension, '-' + yesterday + fileExtension);
-    if (!fs.existsSync(backupPath)) {
-        fsExtra.copySync(jsonPath, backupPath);
-        return true;
-    }
-    return false;
-}
-
-function saveJsonAtPath(jsonContent, jsonPath) {
-    fs.writeFileSync(jsonPath, JSON.stringify(jsonContent), Encoding);
-}
-
 engine.handle(json, arguments, now)
     .then(status => {
         if (status.modified) {
-            saveJsonAtPath(json, jsonPath);
+            fileStore.saveJson(json);
         }
         if (status.report) {
             const report = status.report;
+
             function formatProject(p) {
                 return '  - Duration: ' + formatSeconds(p.seconds) + 's   |   Project: ' + p.project + (p.alias ? ' (' + p.alias + ')' : '');
             }
