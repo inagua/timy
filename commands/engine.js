@@ -1,3 +1,4 @@
+const SetupCommand = require('./setup.command');
 const AliasCommand = require('./alias.command');
 const StartCommand = require('./start.command');
 const RestartCommand = require('./restart.command');
@@ -27,6 +28,7 @@ module.exports = class Engine {
 
     constructor() {
         this.commands = [
+            new SetupCommand(),
             new AliasCommand(),
             new StartCommand(),
             new RestartCommand(),
@@ -47,7 +49,7 @@ module.exports = class Engine {
         let promise = first.handle(json, minimist, now);
         cc.forEach(c => {
             promise = promise.then(status => {
-                return c.handle(json, minimist, now)
+                return c.handle(status.json, minimist, now)
                     .then(status2 => new Promise((resolve, reject) => {
                         const s = {
                             activated: status.activated || status2.activated,

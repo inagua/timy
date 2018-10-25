@@ -12,15 +12,8 @@ const Engine = require('./commands/engine');
 
 const engine = new Engine();
 
-const loadedJson = loadJson(jsonPath);
+const json = loadJson(jsonPath);
 backupJson(jsonPath);
-
-const json = handleSetup(loadedJson, arguments, error => console.error(error));
-if (!json) {
-    console.error(' /!\\ Try to use the --setup argument');
-    console.error(' /!\\ Program exited: nothing done!');
-    return;
-}
 
 function formatSeconds(seconds) {
     return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss");
@@ -46,17 +39,6 @@ function backupJson(jsonPath) {
         return true;
     }
     return false;
-}
-
-function handleSetup(json, arguments) {
-    if (arguments.setup) {
-        return {
-            "aliases": {},
-            "tracks": [],
-            "current": {}
-        };
-    }
-    return json;
 }
 
 function saveJsonAtPath(jsonContent, jsonPath) {

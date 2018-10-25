@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Command = require('./command');
 const Activated = Command.Activated;
 const Modified = Command.Modified;
@@ -16,6 +17,8 @@ module.exports = class AliasCommand extends Command {
                     "tracks": [],
                     "current": {}
                 }));
+            } else if (_.isEmpty(json)) {
+                reject(super.error(!Activated, "/!\\ Original JSON is missing. Try to use the --setup argument."));
             } else {
                 resolve(super.status(!Activated, !Modified, json));
             }

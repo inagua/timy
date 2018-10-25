@@ -1,14 +1,13 @@
 const expect = require('chai').expect;
 const minimist = require('minimist');
-const AliasCommand = require('../../commands/alias.command');
+const SetupCommand = require('../../commands/setup.command');
 
+describe('Start Command', function () {
 
-describe('Alias Command', function () {
-
-    var aliasCommand;
+    var command;
 
     beforeEach(function () {
-        aliasCommand = new AliasCommand();
+        command = new SetupCommand();
     });
 
 
@@ -16,10 +15,10 @@ describe('Alias Command', function () {
         it('should complete minimist options and CLI usage', function () {
             const minimistOptions = {};
             const usage = {};
-            aliasCommand.cli(minimistOptions, usage);
-            expect(minimistOptions).to.eql({alias: {"a": "alias"}, string: ["alias"]});
+            command.cli(minimistOptions, usage);
+            expect(minimistOptions).to.eql({alias: {}});
             expect(usage).to.eql({
-                command: ' --alias|a \"alias:project\"',
+                command: ' --setup',
                 comments: []
             });
         });
@@ -28,75 +27,81 @@ describe('Alias Command', function () {
 
     describe('.handle()', function () {
 
-        it('should add new alias to a project with *alias* argument', function (done) {
-            aliasCommand.handle({}, minimist(['--alias', 'MyAlias:MyProject']))
-                .then(status => {
-                    expect(status).to.eql({
-                        activated: true,
-                        modified: true,
-                        json: {aliases: {'MyAlias': 'MyProject'}}
-                    });
-                    done();
-                });
-        });
-
-        it('should add new alias to a project with *a* alias argument', function (done) {
-            aliasCommand.handle({}, minimist(['-a', 'MyAlias:MyProject']))
-                .then(status => {
-                    expect(status).to.eql({
-                        activated: true,
-                        modified: true,
-                        json: {aliases: {'MyAlias': 'MyProject'}}
-                    });
-                    done();
-                });
-        });
-
-        it('should replace aliases in existing tracks with project', function (done) {
-            aliasCommand.handle({
-                tracks:[ { project:'CommonName-1' }, { project:'CommonName-2' } ]
-            }, minimist(['-a', 'CommonName-1:ProjectCode']))
-                .then(status => {
+        it('should create new JSON and erase previous one if setup argument provided', function (done) {
+            command.handle({"aKey": "aValue"}, minimist(['--setup'])).then(status => {
                     expect(status).to.eql({
                         activated: true,
                         modified: true,
                         json: {
-                            aliases: {'CommonName-1': 'ProjectCode'},
-                            tracks:[ { project:'ProjectCode' }, { project:'CommonName-2' } ]}
+                            "aliases": {},
+                            "tracks": [],
+                            "current": {}
+                        }
                     });
                     done();
-                });
+                }
+            );
         });
 
-        it('should exit on error if no text provided', function (done) {
-            aliasCommand.handle({}, minimist(['--alias']))
-                .catch(error => {
-                    expect(error).to.eql('/!\\ Invalid parameter for alias aka alias:project');
+        it('should not create new JSON if empty but no setup argument provided', function (done) {
+            command.handle({"aKey": "aValue"}, minimist(['--toto'])).then(status => {
+                    expect(status).to.eql({
+                        activated: false,
+                        modified: false,
+                        json: {"aKey": "aValue"}
+                    });
                     done();
-                });
+                }
+            );
         });
 
-        it('should exit on error if parameter is invalid', function (done) {
-            aliasCommand.handle({}, minimist(['--alias', 'aliasWithoutProject']))
-                .catch(error => {
-                    expect(error).to.eql('/!\\ Invalid parameter for alias aka alias:project');
-                    done();
+        it('should provide an error if JSON is empty and command not activated', function (done) {
+            command.handle({}, minimist(['--toto'])).catch(error => {
+                expect(error).to.eql({
+                    activated: false,
+                    error: '/!\\ Original JSON is missing. Try to use the --setup argument.'
                 });
-        });
-
-        it('should exit on error if trying to add existing alias, not case sensitive', function (done) {
-            aliasCommand.handle({aliases: {'coolalias': 'OldProject'}}, minimist(['--alias', 'CoolAlias:AwesomeProject']))
-                .catch(error => {
-                    expect(error).to.eql('/!\\ Alias already exist for project: OldProject');
-                    done();
-                });
-        });
-
-        it('should do nothing if but no start argument provided', function (done) {
-            aliasCommand.handle({}, minimist(['--toto']), undefined).then(status => {
-                expect(status).to.eql({activated: false, modified: false, json: {}});
                 done();
             });
         });
+
+        it('should not create new JSON if not empty but no setup argument provided', function (done) {
+            const json = {
+                "aliases": {
+                    "myprojectalias": "112505",
+                },
+                "tracks": [
+                    {
+                        "start": "2018-09-26T06:53:13.716Z",
+                        "project": "112505",
+                        "stop": "2018-09-26T07:06:22.141Z"
+                    },
+                ],
+                "current": {
+                    "project": "110105",
+                    "start": "2018-09-26T13:04:17.075Z"
+                }
+            };
+
+            command.handle(json, minimist(['--toto'])).then(status => {
+                    expect(status).to.eql({
+                        activated: false,
+                        modified: false,
+                        json: {
+                            aliases: {myprojectalias: '112505'},
+                            tracks: [{
+                                "start": "2018-09-26T06:53:13.716Z",
+                                "project": "112505",
+                                "stop": "2018-09-26T07:06:22.141Z"
+                            }],
+                            current: {project: '110105', start: '2018-09-26T13:04:17.075Z'}
+                        }
+                    });
+                    done();
+                }
+            );
+        });
+
     });
+
 });

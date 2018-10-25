@@ -7,16 +7,18 @@ describe('Engine', function () {
 
     const now = new Date();
     var engine;
-    var jsonWithCurrent;
+    var fixtureJson;
 
     beforeEach(function () {
         engine = new Engine();
 
-        jsonWithCurrent = {
-            current: {
-                "project": "110105",
-                "start": "2018-09-26T13:04:17.075Z"
-            }
+        fixtureJson = {
+            "tracks": [
+                {
+                    "start": "2018-09-26T06:53:13.716Z",
+                    "project": "ConquerTheWorld",
+                    "stop": "2018-09-26T07:06:22.141Z"
+                }]
         };
 
     });
@@ -28,7 +30,7 @@ describe('Engine', function () {
             const usage = {};
             engine.cli(minimistOptions, usage);
             expect(usage).to.eql({
-                command: " --alias|a \"alias:project\" --start AliasOrProject --restart --stop [minutesToRemove] --comment \"Some comment\" --report|r",
+                command: " --setup --alias|a \"alias:project\" --start AliasOrProject --restart --stop [minutesToRemove] --comment \"Some comment\" --report|r",
                 comments: [
                     "minutesToRemove: optional count of minutes to remove to current date as stop date."
                 ]
@@ -39,30 +41,58 @@ describe('Engine', function () {
 
     describe('.handle()', function () {
 
+        it('should handle SETUP command', function (done) {
+            engine.handle({"aKey": "aValue"}, minimist(['--setup'])).then(status => {
+                // console.log('>>>>> 1:', JSON.stringify(status));
+                expect(status).to.eql({
+                        activated: true,
+                        modified: true,
+                        json: {
+                            "aliases": {},
+                            "tracks": [],
+                            "current": {}
+                        }
+                    });
+                    done();
+                }
+            );
+        });
+
+        it('should handle SETUP command with error', function (done) {
+            engine.handle({}, minimist(['--toto'])).catch(error => {
+                expect(error).to.eql({
+                    activated: false,
+                    error: '/!\\ Original JSON is missing. Try to use the --setup argument.'
+                });
+                done();
+            });
+        });
+
         it('should handle ALIAS command', function (done) {
-            engine.handle({}, minimist(['--alias', 'MyAlias:MyProject']))
+            engine.handle(fixtureJson, minimist(['--alias', 'MyAlias:MyProject']))
                 .then(status => {
-
-                    // console.log('>>>>> 1:', JSON.stringify(status));
-
                     expect(status).to.eql({
                         activated: true,
                         modified: true,
-                        json: {aliases: {'MyAlias': 'MyProject'}}
+                        json: {
+                            ...fixtureJson,
+                            aliases: {'MyAlias': 'MyProject'}
+                        }
                     });
                     done();
                 });
         });
 
         it('should handle START command', function (done) {
-            engine.handle({}, minimist(['--start', 'ConquerTheWorld']), now)
+            engine.handle(fixtureJson, minimist(['--start', 'ConquerTheWorld']), now)
                 .then(
                     status => {
                         expect(status).to.eql({
                             activated: true,
                             modified: true,
                             json: {
-                                "current": { start: now, project: "ConquerTheWorld" }
+                                ...fixtureJson,
+                                "current": {start: now, project: "ConquerTheWorld"}
                             }
                         });
                         done();
@@ -120,7 +150,12 @@ describe('Engine', function () {
 
         it('should handle COMMENT command', function (done) {
             const comment = 'make some refactoring';
-            engine.handle(jsonWithCurrent, minimist(['--comment', comment]))
+            engine.handle({
+                current: {
+                    "project": "110105",
+                    "start": "2018-09-26T13:04:17.075Z"
+                }
+            }, minimist(['--comment', comment]))
                 .then(status => {
                     expect(status).to.eql({
                         activated: true,
