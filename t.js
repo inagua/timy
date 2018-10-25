@@ -4,29 +4,20 @@ const now = new Date();
 const arguments = require('minimist')(process.argv.slice(2));
 const moment = require('moment');
 
-const Engine = require('./commands/engine');
-const engine = new Engine();
-
 const FileStore = require('./storage/file.store');
 const fileStore = new FileStore(jsonPath);
-const json = fileStore.loadJson();
 
-function formatSeconds(seconds) {
-    return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss");
-}
+const Engine = require('./commands/engine');
+const engine = new Engine(fileStore);
 
-engine.handle(json, arguments, now)
+engine.run(arguments, now)
     .then(status => {
-        if (status.modified) {
-            fileStore.saveJson(json);
-        }
         if (status.report) {
+            function formatSeconds(seconds) { return moment.utc(moment.duration(seconds, "s").asMilliseconds()).format("HH:mm:ss"); }
+
+            function formatProject(p) { return '  - Duration: ' + formatSeconds(p.seconds) + 's   |   Project: ' + p.project + (p.alias ? ' (' + p.alias + ')' : ''); }
+
             const report = status.report;
-
-            function formatProject(p) {
-                return '  - Duration: ' + formatSeconds(p.seconds) + 's   |   Project: ' + p.project + (p.alias ? ' (' + p.alias + ')' : '');
-            }
-
             console.log('Projects of the day:');
             report.projects.forEach(r => {
                 console.log(formatProject(r));

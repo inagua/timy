@@ -20,13 +20,18 @@ const ReportCommand = require('./report.command');
  *     .then(status => {
  *         // { activated, modified, json }
  *     });
+ * // or:
+ * engine.run(minimist(['--alias', 'MyAlias:MyProject']), now)
+ *     .then(status => {
+ *         // { activated, modified, json }
+ *     });
  * ```
  *
  * @type {module.Engine}
  */
 module.exports = class Engine {
 
-    constructor() {
+    constructor(store) {
         this.commands = [
             new SetupCommand(),
             new AliasCommand(),
@@ -36,6 +41,7 @@ module.exports = class Engine {
             new CommentCommand(),
             new ReportCommand()
         ];
+        this.store = store;
     }
 
     cli(minimistOptions, usage) {
@@ -66,4 +72,17 @@ module.exports = class Engine {
 
         return promise;
     }
+
+    run(minimist, now) {
+        const json = this.store.loadJson();
+        return this.handle(json, minimist, now)
+            .then(status => {
+                if (status.modified) {
+                    this.store.saveJson(status.json);
+                }
+                return new Promise((resolve, reject) => resolve(status));
+            })
+        ;
+    }
+
 };
