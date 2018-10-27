@@ -1,5 +1,7 @@
 const Activated = true;
 const Modified = true;
+const _ = require('lodash');
+
 
 module.exports = class Command {
 
@@ -18,6 +20,10 @@ module.exports = class Command {
             }
         }
         return false;
+    }
+
+    isEmpty(minimist) {
+        return _.isEqual(Object.keys(minimist), ['_']) && _.isEmpty(_.reject(minimist._, _.isEmpty));
     }
 
     /*
@@ -54,10 +60,13 @@ module.exports = class Command {
 
     handle(json, parameters, now) {}
 
-    status(activated, modified, json, report) {
+    status(activated, modified, json, report, help) {
         const status = {activated, modified, json};
         if (report) {
             status.report = report;
+        }
+        if (help) {
+            status.help = help;
         }
         return status;
     }

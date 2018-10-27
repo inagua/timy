@@ -18,8 +18,7 @@ npm install mocha chai --save-dev
 Configure launcher in `package.json`:
 ```
   "scripts": {
-    "test": "mocha test",
-    "autotest": "mocha test --watch"
+    "test": "mocha --recursive --watch"
   },
 ```
 
@@ -36,7 +35,7 @@ describe('Some test', function () {
 Run unit tests:
 
 ```
-npm run autotest
+npm test
 ```
 
 # Amazon URL

@@ -30,7 +30,7 @@ describe('Engine', function () {
             const usage = {};
             engine.cli(minimistOptions, usage);
             expect(usage).to.eql({
-                command: " --setup --alias|a \"alias:project\" --start AliasOrProject --restart --stop [minutesToRemove] --comment \"Some comment\" --report|r",
+                command: " --setup --alias|a \"alias:project\" --start AliasOrProject --restart --stop [minutesToRemove] --comment \"Some comment\" --report|r --help|usage|sos|h",
                 comments: [
                     "minutesToRemove: optional count of minutes to remove to current date as stop date."
                 ]
@@ -43,8 +43,8 @@ describe('Engine', function () {
 
         it('should handle SETUP command', function (done) {
             engine.handle({"aKey": "aValue"}, minimist(['--setup'])).then(status => {
-                // console.log('>>>>> 1:', JSON.stringify(status));
-                expect(status).to.eql({
+                    // console.log('>>>>> 1:', JSON.stringify(status));
+                    expect(status).to.eql({
                         activated: true,
                         modified: true,
                         json: {
@@ -198,7 +198,6 @@ describe('Engine', function () {
             };
             engine.handle(json, minimist(['--report']), now4report)
                 .then(status => {
-                    // console.log('>>>>> 1:', JSON.stringify(status));
                     expect(status).to.eql({
                             "activated": true,
                             "modified": true,
@@ -238,6 +237,39 @@ describe('Engine', function () {
                 })
         });
 
+        it('should handle HELP command', function (done) {
+            engine.handle(fixtureJson, minimist(['--help']), now)
+                .then(status => {
+                    expect(status).to.eql({
+                            activated: true,
+                            modified: false,
+                            json: fixtureJson,
+                            help: {
+                                "command": " --setup --alias|a \"alias:project\" --start AliasOrProject --restart --stop [minutesToRemove] --comment \"Some comment\" --report|r --help|usage|sos|h",
+                                "comments": ["minutesToRemove: optional count of minutes to remove to current date as stop date."]
+                            }
+                        }
+                    );
+                    done();
+                })
+        });
+
+        it('should handle HELP command without any arguments', function (done) {
+            engine.handle(fixtureJson, minimist([]), now)
+                .then(status => {
+                    expect(status).to.eql({
+                            activated: true,
+                            modified: false,
+                            json: fixtureJson,
+                            help: {
+                                "command": " --setup --alias|a \"alias:project\" --start AliasOrProject --restart --stop [minutesToRemove] --comment \"Some comment\" --report|r --help|usage|sos|h",
+                                "comments": ["minutesToRemove: optional count of minutes to remove to current date as stop date."]
+                            }
+                        }
+                    );
+                    done();
+                })
+        });
 
     });
 });

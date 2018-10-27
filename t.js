@@ -32,12 +32,12 @@ engine.run(arguments, now)
             console.log('=========================');
             console.log('TOTAL.......:', formatSeconds(report.seconds) + 's');
         }
+        if (status.help) {
+            console.log('$ node t ', status.help.command);
+            status.help.comments.forEach(c => {
+                console.log(' - ', c);
+            });
+        }
     })
     .catch(error => console.error(error.error))
 ;
-
-
-if (arguments.help || arguments.sos || arguments.usage || process.argv.length == 2) {
-    console.log('$ node t --alias|a alias:project --start aliasOrProject --stop [minutesToRemove] --restart --report|r --comment|c "some comment"');
-    console.log(' - comment are added only on current track if exit')
-}

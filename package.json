@@ -5,8 +5,7 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
-    "test": "mocha --recursive",
-    "autotest": "mocha --recursive --watch"
+    "test": "mocha --recursive --watch"
   },
   "author": "jacques@inagua.ch",
   "license": "ISC",

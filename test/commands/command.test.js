@@ -41,6 +41,20 @@ describe('Command', function () {
         });
     });
 
+    describe('.isEmpty()', function () {
+        it('should return true if no option are provided, false elsewhere', function () {
+            expect(command.isEmpty(minimist([]))).to.eql(true);
+            expect(command.isEmpty(minimist(['']))).to.eql(true);
+
+            expect(command.isEmpty(minimist(['--some']))).to.eql(false);
+            expect(command.isEmpty(minimist(['--synonym']))).to.eql(false);
+            expect(command.isEmpty(minimist(['-s']))).to.eql(false);
+            expect(command.isEmpty(minimist(['-y']))).to.eql(false);
+            expect(command.isEmpty(minimist(['--start']))).to.eql(false);
+            expect(command.isEmpty(minimist(['--start', '--some']))).to.eql(false);
+        });
+    });
+
     describe('.getProjectForAlias()', function () {
         it('should return the project corresponding to a defined alias not case sensitive, or the given alias elsewhere', function () {
             expect(command.getProjectForAlias({aliases:{'alias':'project'}}, 'alias')).to.eql('project');

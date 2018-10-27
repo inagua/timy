@@ -5,6 +5,7 @@ const RestartCommand = require('./restart.command');
 const StopCommand = require('./stop.command');
 const CommentCommand = require('./comment.command');
 const ReportCommand = require('./report.command');
+const HelpCommand = require('./help.command');
 
 /**
  * Usage:
@@ -32,6 +33,8 @@ const ReportCommand = require('./report.command');
 module.exports = class Engine {
 
     constructor(store) {
+        this.helpCommand = new HelpCommand();
+
         this.commands = [
             new SetupCommand(),
             new AliasCommand(),
@@ -39,8 +42,12 @@ module.exports = class Engine {
             new RestartCommand(),
             new StopCommand(),
             new CommentCommand(),
-            new ReportCommand()
+            new ReportCommand(),
+            this.helpCommand,
         ];
+        const usage = {};
+        this.cli({}, usage)
+        this.helpCommand.setHelp(usage);
         this.store = store;
     }
 
@@ -64,6 +71,9 @@ module.exports = class Engine {
                         };
                         if (status.report || status2.report) {
                             s.report = status.report || status2.report;
+                        }
+                        if (status.help || status2.help) {
+                            s.help = status.help || status2.help;
                         }
                         resolve(s)
                     }));
